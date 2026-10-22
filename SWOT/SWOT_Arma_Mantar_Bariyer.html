@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<title>SWOT Analizi · Arma Mantar Bariyer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&family=Literata:opsz,wght@7..72,600;7..72,700&display=swap" rel="stylesheet">
+<style>
+  @page { size: A4; margin: 0; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: #fff; }
+  body {
+    font-family: 'Lato', 'Segoe UI', Arial, sans-serif;
+    color: #1f2a37; font-size: 9.3pt; line-height: 1.4;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  }
+  .page { width: 210mm; height: 297mm; position: relative; overflow: hidden; break-after: page; }
+  .page:last-child { break-after: auto; }
+
+  .band { height: 33mm; position: relative; overflow: hidden; color: #fff;
+          background: linear-gradient(100deg, #172238 0%, #1d3552 48%, #2f6aa8 100%); }
+  .band::after { content: ''; position: absolute; right: -16mm; top: -26mm; width: 72mm; height: 72mm;
+                 border-radius: 50%; background: rgba(255,255,255,0.10); }
+  .band .icon { position: absolute; left: 14mm; top: 9mm; width: 14mm; height: 14mm; border-radius: 50%;
+                border: 1.2px solid rgba(255,255,255,.55); background: rgba(255,255,255,.08);
+                display: flex; align-items: center; justify-content: center; }
+  .band .kicker { position: absolute; left: 32mm; top: 9.5mm; font-size: 7.2pt; letter-spacing: .26em;
+                  font-weight: 700; text-transform: uppercase; opacity: .92; }
+  .band h1 { position: absolute; left: 32mm; top: 13.5mm; margin: 0; font-family: 'Literata', Georgia, serif;
+             font-weight: 700; font-size: 21pt; letter-spacing: -.01em; }
+  .band .pill { position: absolute; right: 14mm; top: 15mm; border: 1px solid rgba(255,255,255,.65);
+                border-radius: 999px; padding: 1.8mm 4.2mm; font-size: 8pt; font-weight: 700;
+                background: rgba(255,255,255,.08); z-index: 2; }
+
+  .content { padding: 5.5mm 14mm 0 14mm; }
+  .meta { display: grid; grid-template-columns: 1.7fr 1.2fr 1fr; gap: 9mm; font-size: 8pt;
+          color: #64748b; font-weight: 700; }
+  .meta div { border-bottom: 1px solid #cbd5e1; padding-bottom: 1.4mm; }
+  .meta span { font-weight: 400; color: #111827; margin-left: 2.5mm; font-size: 8.6pt; }
+
+  .context { margin-top: 3.6mm; background: #edf2f5; border-radius: 2.5mm; padding: 2.4mm 4.5mm 2.4mm 7.5mm;
+             position: relative; font-size: 8.4pt; }
+  .context::before { content: ''; position: absolute; left: 3mm; top: 2.6mm; bottom: 2.6mm; width: 1.3mm;
+                     border-radius: 1mm; background: #2f6aa8; }
+  .context b.t { color: #13786e; }
+  .frame { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4.5mm; margin-top: 1.6mm;
+           font-size: 7.7pt; color: #334155; line-height: 1.35; }
+  .frame .lbl { display: block; font-size: 6.4pt; font-weight: 900; letter-spacing: .12em; text-transform: uppercase;
+                color: #2f6aa8; margin-bottom: .3mm; }
+
+  h2.task { font-family: 'Literata', Georgia, serif; font-weight: 700; font-size: 12.5pt; margin: 4.5mm 0 2.5mm 0;
+            display: flex; align-items: center; gap: 3mm; color: #1f2a37; }
+  h2.task::after { content: ''; flex: 1; height: 1px; background: #d5dee7; }
+  .lead { margin: 0 0 3mm 0; font-size: 8.4pt; color: #334155; }
+
+  .g, .v { display: inline-block; font-size: 6.3pt; font-weight: 900; line-height: 1; padding: .5mm 1mm;
+           border-radius: 1mm; vertical-align: 1px; margin-left: .6mm; font-style: normal; }
+  .g { background: #e2f3ef; color: #0f766e; border: 1px solid #9fd3c7; }
+  .v { background: #fff3dd; color: #92560a; border: 1px solid #efc983; }
+  .ref { display: inline-block; font-size: 6.1pt; font-weight: 900; color: #64748b; background: #fff;
+         border: 1px solid #d9e2ea; border-radius: 1mm; padding: .5mm 1mm; margin-left: .7mm;
+         white-space: nowrap; line-height: 1; vertical-align: 1px; }
+
+  /* ---------- SWOT matrix ---------- */
+  .mx { display: grid; grid-template-columns: 6mm 1fr 1fr; column-gap: 2.4mm; row-gap: 2.2mm; margin-top: 3mm; }
+  .mx .ax { font-size: 6.4pt; font-weight: 900; letter-spacing: .16em; text-transform: uppercase; color: #64748b; }
+  .mx .ax.c { text-align: center; border-bottom: 1px solid #d5dee7; padding-bottom: .9mm; }
+  .mx .ax.r { background: #f1f5f9; border-radius: 1.5mm; display: flex; align-items: center; justify-content: center; }
+  .mx .ax.r span { writing-mode: vertical-rl; transform: rotate(180deg); white-space: nowrap; }
+  .qd { border: 1px solid var(--bd); background: var(--bg); border-radius: 2.6mm; padding: 2.2mm 2.8mm 1mm 2.8mm; }
+  .qd h3 { margin: 0 0 1.5mm 0; display: flex; align-items: center; gap: 2.2mm; font-family: 'Literata', Georgia, serif;
+           font-size: 10.4pt; color: var(--ink); }
+  .qd h3 .L { width: 6.4mm; height: 6.4mm; border-radius: 1.6mm; background: var(--c); color: #fff; flex: none;
+              display: flex; align-items: center; justify-content: center; font-size: 10.2pt; }
+  .qd h3 small { margin-left: auto; font-family: 'Lato', 'Segoe UI', Arial, sans-serif; font-size: 6.5pt;
+                 font-weight: 900; letter-spacing: .08em; color: var(--c); }
+  .qd ol { list-style: none; margin: 0; padding: 0; }
+  .qd li { display: grid; grid-template-columns: 6mm 1fr; column-gap: 1.2mm; font-size: 7.4pt; line-height: 1.31;
+           margin-bottom: 1.05mm; color: #1f2a37; }
+  .qd li .id { font-weight: 900; font-size: 6.9pt; color: var(--c); padding-top: .2mm; }
+  .qd li b { color: #0f2a40; }
+  .qd.s { --c: #0f766e; --bg: #f1faf8; --bd: #b5ded4; --ink: #0b4f49; }
+  .qd.w { --c: #b3261e; --bg: #fdf4f3; --bd: #f0c4bf; --ink: #7a1a14; }
+  .qd.o { --c: #1f5fa8; --bg: #f1f6fc; --bd: #bcd2ed; --ink: #17457a; }
+  .qd.t { --c: #6b46c1; --bg: #f6f2fd; --bd: #d6c9f2; --ink: #48308a; }
+
+  /* ---------- TOWS ---------- */
+  .tw { display: grid; grid-template-columns: 27mm 1fr 1fr; gap: 2.2mm; }
+  .tw .corner { background: #f1f5f9; border-radius: 2mm; display: flex; align-items: center; justify-content: center;
+                text-align: center; font-size: 6.6pt; font-weight: 900; letter-spacing: .1em; text-transform: uppercase;
+                color: #64748b; line-height: 1.7; }
+  .tw .ch, .tw .rh { border-radius: 2mm; color: #fff; padding: 2mm 2.6mm; font-size: 7.1pt; line-height: 1.35; }
+  .tw .ch b { display: block; font-family: 'Literata', Georgia, serif; font-size: 10pt; margin-bottom: .6mm; }
+  .tw .rh { font-size: 6.9pt; line-height: 1.6; }
+  .tw .rh .big { display: block; font-family: 'Literata', Georgia, serif; font-size: 16pt; line-height: 1.1; }
+  .tw .rh .nm { display: block; font-family: 'Literata', Georgia, serif; font-size: 9.6pt; font-weight: 700; margin-bottom: 1.4mm; }
+  .tw .ch.s { background: #0f766e; } .tw .ch.w { background: #b3261e; }
+  .tw .rh.o { background: #1f5fa8; } .tw .rh.t { background: #6b46c1; }
+  .tw .cell { border: 1px solid #d9e2ea; border-radius: 2.5mm; padding: 2.4mm 2.8mm .6mm 2.8mm; background: #fbfcfd; }
+  .tw .cell h4 { margin: 0 0 2mm 0; display: flex; align-items: center; gap: 2mm; font-family: 'Literata', Georgia, serif;
+                 font-size: 9.5pt; color: #1f2a37; white-space: nowrap; }
+  .code { font-family: 'Lato', 'Segoe UI', Arial, sans-serif; font-weight: 900; font-size: 7.4pt; color: #fff;
+          padding: .7mm 1.7mm; border-radius: 1mm; letter-spacing: .06em; flex: none; }
+  .code.so { background: linear-gradient(90deg, #0f766e 50%, #1f5fa8 50%); }
+  .code.wo { background: linear-gradient(90deg, #b3261e 50%, #1f5fa8 50%); }
+  .code.st { background: linear-gradient(90deg, #0f766e 50%, #6b46c1 50%); }
+  .code.wt { background: linear-gradient(90deg, #b3261e 50%, #6b46c1 50%); }
+  .stg { margin-bottom: 1.7mm; font-size: 7.6pt; line-height: 1.34; color: #1f2a37; }
+  .stg .h { display: flex; align-items: baseline; gap: 1.6mm; margin-bottom: .3mm; }
+  .stg .sid { font-weight: 900; font-size: 7.2pt; color: #0f2a40; width: 7.4mm; flex: none; }
+  .stg .nm { font-weight: 900; color: #0f2a40; font-size: 8pt; }
+  .stg .pair { margin-left: auto; font-size: 6.7pt; font-weight: 700; color: #64748b; white-space: nowrap; }
+  .stg .tx, .stg .chips { padding-left: 9mm; }
+  .stg .chips { margin-top: .7mm; }
+  .stg .chips .ref { margin-left: 0; }
+  .own, .ph { display: inline-block; font-size: 6.2pt; font-weight: 900; border-radius: 1mm; padding: .55mm 1.2mm;
+              margin-right: .8mm; line-height: 1; vertical-align: 1px; }
+  .own { background: #eef2f6; color: #334155; }
+  .ph.p1 { background: #fdeceb; color: #a1231b; }
+  .ph.p2 { background: #e9f1fb; color: #1d5596; }
+  .ph.p3 { background: #eef0f4; color: #475569; }
+
+  /* ---------- roadmap ---------- */
+  .road { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 3mm; }
+  .rp { border: 1px solid #d9e2ea; border-radius: 2.6mm; overflow: hidden; background: #fff; display: flex; flex-direction: column; }
+  .rp .hd { padding: 2mm 3mm 1.8mm; color: #fff; }
+  .rp .hd b { font-family: 'Literata', Georgia, serif; font-size: 11pt; display: block; line-height: 1.2; }
+  .rp .hd span { font-size: 7pt; opacity: .92; }
+  .rp.p1 .hd { background: #a1231b; } .rp.p2 .hd { background: #1d5596; } .rp.p3 .hd { background: #475569; }
+  .rp ul.sts { list-style: none; margin: 0; padding: 2mm 3mm 1.2mm; font-size: 7.6pt; line-height: 1.3; }
+  .rp ul.sts li { display: grid; grid-template-columns: 9.5mm 1fr; margin-bottom: .7mm; }
+  .rp ul.sts li .sid { font-weight: 900; color: #0f2a40; }
+  .rp .kpi { margin-top: auto; border-top: 1px dashed #cbd5e1; padding: 1.8mm 3mm 2mm; font-size: 7.3pt; background: #f8fafc; color: #12324a; }
+  .rp .kpi .lbl { display: block; font-size: 6.3pt; font-weight: 900; letter-spacing: .12em; text-transform: uppercase;
+                  color: #64748b; margin-bottom: .7mm; }
+  .rp .kpi ul { list-style: none; margin: 0; padding: 0; }
+  .rp .kpi li { display: grid; grid-template-columns: 3.8mm 1fr; margin-bottom: .5mm; line-height: 1.3; }
+  .rp .kpi li::before { content: ''; width: 2.3mm; height: 2.3mm; border: 1px solid #94a3b8; border-radius: .5mm; margin-top: .5mm; }
+
+  .chart svg { width: 100%; height: auto; display: block; }
+  .note { margin-top: 1.6mm; font-size: 7.8pt; color: #334155; border-left: 2px solid #cbd5e1; padding-left: 3mm; }
+
+  /* ---------- external timeline ---------- */
+  .tl { position: relative; display: grid; grid-template-columns: repeat(6, 1fr); gap: 2.4mm; padding-top: 9mm; }
+  .tl::before { content: ''; position: absolute; left: 3mm; right: 3mm; top: 5.5mm; height: 1.4px; background: #94a3b8; }
+  .tl .ev { position: relative; border: 1px solid #d9e2ea; border-radius: 2.2mm; padding: 1.8mm 2.2mm 1.6mm;
+            font-size: 7pt; line-height: 1.3; background: #fff; color: #1f2a37; }
+  .tl .ev::before { content: ''; position: absolute; top: -5mm; left: 50%; width: 3mm; height: 3mm; margin-left: -1.5mm;
+                    border-radius: 50%; background: #fff; border: 1.6px solid #1f5fa8; }
+  .tl .ev.done::before { background: #1f5fa8; }
+  .tl .ev.thr::before { border-color: #6b46c1; }
+  .tl .ev.thr.done::before { background: #6b46c1; }
+  .tl .ev .d { display: block; font-weight: 900; font-size: 8.1pt; color: #0f2a40; }
+  .tl .ev .s8 { display: block; font-size: 6pt; font-weight: 900; letter-spacing: .1em; text-transform: uppercase;
+                color: #64748b; margin-bottom: .5mm; }
+  .tl .ev .lk { display: block; margin-top: 1mm; padding-top: .9mm; border-top: 1px solid #eef2f6;
+                font-size: 6.5pt; font-weight: 900; color: #475569; }
+  .tl .now { position: absolute; top: 0; left: calc((100% - 12mm) / 3 + 3.6mm); transform: translateX(-50%);
+             background: #b3261e; color: #fff; font-size: 6.2pt; font-weight: 900; letter-spacing: .1em;
+             text-transform: uppercase; border-radius: 999px; padding: .6mm 2mm; white-space: nowrap; z-index: 2; }
+  .tl .now::after { content: ''; position: absolute; left: 50%; top: 100%; width: 0; height: 3.2mm;
+                    border-left: 1.4px dashed #b3261e; }
+  .legend { margin-top: 1.5mm; font-size: 6.9pt; color: #64748b; display: flex; gap: 4mm; align-items: center; }
+  .legend i { display: inline-block; width: 2.6mm; height: 2.6mm; border-radius: 50%; margin-right: 1mm; vertical-align: -.4mm; }
+
+  .concl { margin-top: 4mm; background: #f2fbf9; border: 1px solid #b5ded4; border-left: 3px solid #0f766e;
+           border-radius: 2mm; padding: 2.8mm 3.8mm; font-size: 8.6pt; color: #12324a; }
+  .concl h3 { margin: 0 0 1.2mm 0; font-family: 'Literata', Georgia, serif; font-size: 10.5pt; color: #0b4f49; }
+  .concl p { margin: 0; }
+  .box { border: 1px solid #d9e2ea; border-radius: 2.5mm; padding: 2.2mm 3.2mm; font-size: 7.4pt; margin-top: 2.8mm; color: #475569; }
+
+  .footer { position: absolute; left: 14mm; right: 14mm; bottom: 8mm; border-top: 1px solid #d9e2ea;
+            padding-top: 2mm; font-size: 7.2pt; color: #64748b; display: flex; justify-content: space-between; }
+</style>
+</head>
+<body>
+
+<!-- ============================ PAGE 1 · SWOT ============================ -->
+<section class="page">
+  <div class="band">
+    <div class="icon">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.7" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M15.6 8.4 13.3 13.3 8.4 15.6 10.7 10.7Z"/><circle cx="12" cy="12" r=".9" fill="#fff" stroke="none"/></svg>
+    </div>
+    <div class="kicker">Sentez · Arma Mantar Bariyer · Kimya Tesisi Girişi</div>
+    <h1>SWOT Analizi</h1>
+    <div class="pill">Çıktı: TOWS + Yol Haritası</div>
+  </div>
+
+  <div class="content">
+    <div class="meta">
+      <div>Ad Soyad<span>Mehmet Onur Boyraz · 245541023</span></div>
+      <div>Grup<span></span></div>
+      <div>Tarih<span>20.10.2026</span></div>
+    </div>
+
+    <div class="context">
+      <b class="t">Kavram — SWOT bir karar aracıdır:</b> iç faktörler (S, W) sistemin, dış faktörler (O, T) çevrenin. Maddeler önem sırasındadır; gri etiket kaynak föyü, <span class="g">G</span> üretici sitesini, <span class="v">V</span> senaryo varsayımını gösterir.
+      <div class="frame">
+        <div><span class="lbl">Hedef</span>Girişi 24/7 insana emniyetli, saldırgana kapalı tutmak.</div>
+        <div><span class="lbl">Analiz birimi</span>Bariyer sistemi: ürün + kurulum + süreç, tesis gözünden.</div>
+        <div><span class="lbl">İç / dış</span>İç: tesisin değiştirebildiği. Dış: kontrol edemediği.</div>
+        <div><span class="lbl">Mevzuat kuralı</span>Üreticiye yük getiren kural fırsat, tesise getiren tehdit.</div>
+      </div>
+    </div>
+
+    <div class="mx">
+      <div></div>
+      <div class="ax c">Hedefe yardımcı</div>
+      <div class="ax c">Hedefe zararlı</div>
+
+      <div class="ax r"><span>İç · sistem</span></div>
+      <div class="qd s">
+        <h3><span class="L">S</span>Güçlü yönler<small>S1–S6</small></h3>
+        <ol>
+          <li><span class="id">S1</span><span><b>Kanıtlı fiziksel dayanım.</b> ISO 22343-1:2023: 7.500 kg @ 80 km/s, 1.224 kJ; Ø273 mm, 16 mm et<span class="g">G</span>. Düşmanca araç zincirini (S2, R5) son halkada keser.<span class="ref">LAB 3</span></span></li>
+          <li><span class="id">S2</span><span><b>Varsayılan durum güvenlik tarafında.</b> Bariyer normalde yukarıda<span class="v">V</span>; ağ ya da YZ arızasında "kapalı kal" doğal ve ucuz bir geri dönüş.<span class="ref">LAB 1 · 7</span></span></li>
+          <li><span class="id">S3</span><span><b>Çok faktörlü doğrulamaya hazır.</b> Loop standart; fotosel, kart okuyucu, plaka okuma ve OGS/HGS ile uyumlu<span class="g">G</span>. "3 faktörden en az 2" kuralının sensörleri sahada.<span class="ref">LAB 7</span></span></li>
+          <li><span class="id">S4</span><span><b>Enerjisiz kurtarma yolu.</b> Küresel vanayla manuel indirme (benzer modeller)<span class="g">G</span>: enerji ya da kontrol sistemi çökse de bariyer güvenli duruma alınır.<span class="ref">LAB 1 · 6</span></span></li>
+          <li><span class="id">S5</span><span><b>Merkezi izleme.</b> WOC ve Arma Mobil gerçek zamanlı rapor veriyor, bariyerleri tek merkezden yönetiyor<span class="g">G</span>; doğru kurgulanırsa olay tespiti ve delil için hazır kaynak.<span class="ref">LAB 6</span></span></li>
+          <li><span class="id">S6</span><span><b>Belgelenmiş Safety 4.0 tabanı.</b> SF haritası, zone/conduit modeli, risk register, GR-1…7, yama ve olay akışları hazır: yatırım ölçülebilir gereksinime bağlanır.<span class="ref">LAB 1–7</span></span></li>
+        </ol>
+      </div>
+      <div class="qd w">
+        <h3><span class="L">W</span>Zayıf yönler<small>W1–W7</small></h3>
+        <ol>
+          <li><span class="id">W1</span><span><b>Emniyet ile kumanda aynı kartta.</b> SF-1 mantığı ağa bağlı Arma Kart'ta<span class="v">V</span>; ağdan gelen her yol emniyete de dokunuyor. Projenin dijital kesişim noktası.<span class="ref">LAB 1 · 4</span></span></li>
+          <li><span class="id">W2</span><span><b>Algılama boşluğu.</b> Loop metal kütleyi görür; yayayı hiç, bisikleti güvenilir biçimde algılamaz. Fotosel yalnız aksesuar<span class="g">G</span>; SF-1 algıladığı kadar korur (GR-6).<span class="ref">LAB 1 · 4</span></span></li>
+          <li><span class="id">W3</span><span><b>Kimlik ve parola hijyeni.</b> Paylaşılan Arma Mobil hesabı; Arma Kart, kamera ve 4G router'da varsayılan parola; Wi-Fi parolası duvarda<span class="v">V</span>. En yüksek risk: S1 = 27.<span class="ref">LAB 2 · 3</span></span></li>
+          <li><span class="id">W4</span><span><b>Filtresiz yollar.</b> Arma Kart'a dört yol: bulut/4G, 7/24 TeamViewer, kulübe Wi-Fi, sabit kodlu RF 433 MHz; üstüne kilitsiz USB; internet doğrudan Z1'de bitiyor<span class="v">V</span>.<span class="ref">LAB 2 · 4</span></span></li>
+          <li><span class="id">W5</span><span><b>Görünmeyen yazılım.</b> SBOM ve yama süreci yok<span class="v">V</span>. Component X (CVSS 9.8) bugün üç şartın üçünü de sağlıyor; karar "otomatik modu durdur".<span class="ref">LAB 5</span></span></li>
+          <li><span class="id">W6</span><span><b>Belgesiz yapay zekâ.</b> ARM.v19™ "bazı durumlarda kendileri karar veriyor"<span class="g">G</span>; sitede sınır, doğruluk ya da eşik bilgisi yok, "garanti" doğrulanamıyor.<span class="ref">LAB 7</span></span></li>
+          <li><span class="id">W7</span><span><b>Tanımsız olay müdahalesi.</b> Rol, kayıt ve delil zinciri yok<span class="v">V</span>; "reset" refleksi kanıtı siler ve emniyeti doğrulanmamış bir duruma döndürür.<span class="ref">LAB 6</span></span></li>
+        </ol>
+      </div>
+
+      <div class="ax r"><span>Dış · çevre</span></div>
+      <div class="qd o">
+        <h3><span class="L">O</span>Fırsatlar<small>O1–O6</small></h3>
+        <ol>
+          <li><span class="id">O1</span><span><b>CRA yükü tedarikçide.</b> CE işaretli üründe<span class="g">G</span> AB kuralı: güvenli tasarım, ≥ 5 yıl destek, açık bildirimi (11.09.2026), SBOM (11.12.2027); ihlal cezası 15 M€ ya da cironun %2,5'i. Tesis bunu sözleşmeye taşır.<span class="ref">LAB 5 · 6</span></span></li>
+          <li><span class="id">O2</span><span><b>Makine Yönetmeliği siberi emniyete bağlıyor.</b> 2023/1230 (AB, 20.01.2027): bozulmaya karşı koruma (Ek III 1.1.9), kumanda güvenilirliği (1.2.1); yeni alımda şartname dayanağı.<span class="ref">LAB 1 · 4</span></span></li>
+          <li><span class="id">O3</span><span><b>Olgun standartlar, ölçülebilir kanıt.</b> ISO 13849-1:2023, IEC 62443-4-2, IEC TR 63069, ISO/IEC TR 5469: tedarikçiden "güvenli" sözü yerine PL, SL ve test raporu istenir.<span class="ref">LAB 1 · 2</span></span></li>
+          <li><span class="id">O4</span><span><b>Hedef mimari raf ürünüyle kurulur.</b> Safety PLC, güvenlik sınıfı radar/tarayıcı, OT IDS, jump server, imzalı firmware ve dijital ikiz piyasada hazır; özel geliştirme gerekmez.<span class="ref">LAB 4 · 5</span></span></li>
+          <li><span class="id">O5</span><span><b>YZ kuralları net, takvim uzadı.</b> AI Act Md. 14 (insan gözetimi) ve 15 (doğruluk, sağlamlık) belge istemeye dayanak; Ek I yüksek risk 02.08.2028'e ertelendi (2026/1744).<span class="ref">LAB 7</span></span></li>
+          <li><span class="id">O6</span><span><b>Ulusal koordinasyon kanalı.</b> USOM, sektörel SOME'ler, 7545 sayılı Kanun ve Siber Güvenlik Başkanlığı: tehdit bilgisi, olay koordinasyonu.<span class="ref">LAB 6</span></span></li>
+        </ol>
+      </div>
+      <div class="qd t">
+        <h3><span class="L">T</span>Tehditler<small>T1–T6</small></h3>
+        <ol>
+          <li><span class="id">T1</span><span><b>Fırsatçı ve hedefli saldırgan.</b> İnternete açık OT arayüzleri otomatik taranır; varsayılan parolalı PLC'ler ilk hedef (CISA AA23-335A). Hedefli: eski çalışan (S1), organize grup (S2).<span class="ref">LAB 3</span></span></li>
+          <li><span class="id">T2</span><span><b>Siber-fiziksel saldırı.</b> RF kaydet-oynat ya da loop'a metal plakayla bariyeri indirip düşmanca araç sokmak: bariyerin var oluş nedeni olan tehdit siber yoldan da gelir.<span class="ref">LAB 3</span></span></li>
+          <li><span class="id">T3</span><span><b>Tedarik zinciri ve bulut.</b> Bileşen açığı (Component X, 9.8) KEV'e girerse istismar hızlanır; Arma Mobil bulutunun ele geçirilmesi ya da kesintisi tesisin elinde değil.<span class="ref">LAB 5</span></span></li>
+          <li><span class="id">T4</span><span><b>YZ'yi kandırmak.</b> Klon ya da sahte plaka, adversarial desen, tekrar oynatılan görüntü akışı → yanlış "YETKİLİ". Saldırgan modeli değil, girdiyi hedefler.<span class="ref">LAB 7</span></span></li>
+          <li><span class="id">T5</span><span><b>Tesise yük getiren mevzuat.</b> Yaralanmada İSG (6331) ve BEKRA sorumluluğu; plaka verisinde KVKK (72 saat); 7545 ile siber olay ve zafiyetin gecikmeksizin bildirimi.<span class="ref">LAB 6</span></span></li>
+          <li><span class="id">T6</span><span><b>Yaşam döngüsü ve bağımlılık.</b> Kapalı ekosistem (Arma Kart, WOC, Mobil, bulut); mekanik ömür yazılım desteğinden uzun olabilir (CRA tabanı 5 yıl): destek biterse yamasız kalınır.<span class="ref">LAB 5</span></span></li>
+        </ol>
+      </div>
+    </div>
+  </div>
+  <div class="footer"><span>SAFETY 4.0 BOOTCAMP · Arma Mantar Bariyer Sürümü · Bu bir eğitim çıktısıdır, resmî denetim değildir.</span><span>1 / 3</span></div>
+</section>
+
+<!-- ============================ PAGE 2 · TOWS ============================ -->
+<section class="page">
+  <div class="content" style="padding-top: 11mm;">
+    <h2 class="task" style="margin-top:0;">TOWS: SWOT'tan stratejiye</h2>
+    <p class="lead">Her strateji bir iç ve bir dış faktörü eşleştirir: SO atak, WO dönüşüm, ST savunma, WT hayatta kalma stratejisidir. Kodlar sonraki sayfadaki yol haritasına bağlanır; etiketler sorumluyu (Tesis · Entegratör · Arma) ve evreyi gösterir.</p>
+
+    <div class="tw">
+      <div class="corner">İç →<br>Dış ↓</div>
+      <div class="ch s"><b>S · Güçlü yönler</b>S1 fiziksel dayanım · S2 varsayılan kapalı · S3 entegrasyon · S4 manuel indirme · S5 izleme · S6 belgeler</div>
+      <div class="ch w"><b>W · Zayıf yönler</b>W1 aynı kart · W2 algılama · W3 hijyen · W4 filtresiz yol · W5 SBOM yok · W6 belgesiz YZ · W7 olay müdahalesi</div>
+
+      <div class="rh o"><span class="big">O</span><span class="nm">Fırsatlar</span>O1 CRA<br>O2 MR 2023/1230<br>O3 standartlar<br>O4 raf ürünler<br>O5 AI Act<br>O6 ulusal kanal</div>
+      <div class="cell">
+        <h4><span class="code so">SO</span>Güçle fırsatı kullan</h4>
+        <div class="stg"><div class="h"><span class="sid">SO1</span><span class="nm">Çok faktörlü geçiş</span><span class="pair">S3 + O3 · O5</span></div>
+          <div class="tx">Kart, plaka ve loop'tan en az ikisi uyuşmadan "aç talebi" yok; ARM.v19™ yalnız öneri verir, belirsiz durumda görevli karar verir.</div>
+          <div class="chips"><span class="own">Tesis + entegratör</span><span class="ph p2">1–6 ay</span><span class="ref">LAB 7</span></div></div>
+        <div class="stg"><div class="h"><span class="sid">SO2</span><span class="nm">Kayıttan delile</span><span class="pair">S5 + O6</span></div>
+          <div class="tx">WOC ve Mobil kayıtları Z4'teki merkezi kayda ve OT IDS'e akar; USOM/SOME bildirim şablonu hazır tutulur.</div>
+          <div class="chips"><span class="own">Tesis</span><span class="ph p2">1–6 ay</span><span class="ref">LAB 6</span></div></div>
+        <div class="stg"><div class="h"><span class="sid">SO3</span><span class="nm">Sözleşmeyle güvenlik</span><span class="pair">S6 + O1 · O2</span></div>
+          <div class="tx">GR-1…7 satın alma ve bakım sözleşmesine yazılır: SBOM, imzalı firmware, açık bildirimi, yazılı destek süresi, IEC 62443-4-2 kanıtı.</div>
+          <div class="chips"><span class="own">Tesis → Arma</span><span class="ph p3">6–18 ay</span><span class="ref">LAB 4 · 5</span></div></div>
+      </div>
+      <div class="cell">
+        <h4><span class="code wo">WO</span>Fırsatla zayıflığı kapat</h4>
+        <div class="stg"><div class="h"><span class="sid">WO1</span><span class="nm">Emniyeti ayır</span><span class="pair">W1 + O2 · O4</span></div>
+          <div class="tx">SF-1 ağsız Z0'daki Safety PLC'ye taşınır (PLr e); Arma Kart yalnız "yükseltme talebi" gönderir: izin = talep ∧ ¬varlık. Arma'yla yapılır, çünkü MR 2023/1230'da esaslı değişikliği yapan imalatçı sayılır.</div>
+          <div class="chips"><span class="own">Entegratör + Arma</span><span class="ph p2">1–6 ay</span><span class="ref">GR-1 · 2 · 4</span></div></div>
+        <div class="stg"><div class="h"><span class="sid">WO2</span><span class="nm">Yayayı gör</span><span class="pair">W2 + O4</span></div>
+          <div class="tx">Güvenlik sınıfı radar ya da tarayıcı bariyerin tüm hareket hacmini izler; yaya geçidi araç şeridinden ayrılır (E↓).</div>
+          <div class="chips"><span class="own">Tesis + entegratör</span><span class="ph p2">1–6 ay</span><span class="ref">GR-6 · LAB 3</span></div></div>
+        <div class="stg"><div class="h"><span class="sid">WO3</span><span class="nm">Yazılımı görünür kıl</span><span class="pair">W5 + O1</span></div>
+          <div class="tx">Arma'dan CycloneDX/SPDX SBOM; CVE ve KEV izlemesi; dijital ikizde test edilmiş planlı yama (Pazar 02:00–04:00).</div>
+          <div class="chips"><span class="own">Arma + tesis</span><span class="ph p3">6–18 ay</span><span class="ref">LAB 5</span></div></div>
+        <div class="stg"><div class="h"><span class="sid">WO4</span><span class="nm">YZ'ye sınır çiz</span><span class="pair">W6 + O5 · O3</span></div>
+          <div class="tx">Eşikler: &lt; 0,80 kapalı kal · 0,80–0,95 insana sor · ≥ 0,95 ve ikinci faktör → talep; yanlış kabul &lt; 1/10.000; tedarikçiden doğruluk ve sağlamlık raporu.</div>
+          <div class="chips"><span class="own">Arma + tesis</span><span class="ph p3">6–18 ay</span><span class="ref">LAB 7</span></div></div>
+      </div>
+
+      <div class="rh t"><span class="big">T</span><span class="nm">Tehditler</span>T1 saldırgan<br>T2 siber-fiziksel<br>T3 tedarik zinciri<br>T4 YZ'yi kandırma<br>T5 tesis mevzuatı<br>T6 yaşam döngüsü</div>
+      <div class="cell">
+        <h4><span class="code st">ST</span>Güçle tehdidi karşıla</h4>
+        <div class="stg"><div class="h"><span class="sid">ST1</span><span class="nm">Şüphede kapalı kal</span><span class="pair">S1 + S2 ↔ T2 · T4</span></div>
+          <div class="tx">Girdiler çelişirse ya da görüntü kalitesi düşerse bariyer yukarıda kalır ve alarm üretir; sas kilidi: iç ve dış hat aynı anda inmez.</div>
+          <div class="chips"><span class="own">Tesis</span><span class="ph p1">0–30 gün</span><span class="ref">LAB 3 · 7</span></div></div>
+        <div class="stg"><div class="h"><span class="sid">ST2</span><span class="nm">Ağsız işletme modu</span><span class="pair">S4 ↔ T1 · T3</span></div>
+          <div class="tx">Siber olayda otomatik mod durur, görevli manuel basılı-tut modda işletir. Küresel vana panosu kilitlenir ve mühürlenir: fiziksel erişim de bir saldırı yolu.</div>
+          <div class="chips"><span class="own">Tesis</span><span class="ph p1">0–30 gün</span><span class="ref">LAB 5 · 6</span></div></div>
+        <div class="stg"><div class="h"><span class="sid">ST3</span><span class="nm">Kanıt dosyası</span><span class="pair">S6 ↔ T5</span></div>
+          <div class="tx">Risk değerlendirmesi, SF doğrulama, değişiklik ve olay kayıtları tek dosyada tutulur: İSG, BEKRA ve KVKK denetiminde savunma.</div>
+          <div class="chips"><span class="own">Tesis</span><span class="ph p2">1–6 ay</span><span class="ref">LAB 1 · 6</span></div></div>
+      </div>
+      <div class="cell">
+        <h4><span class="code wt">WT</span>Zayıflığı azalt, tehditten kaç</h4>
+        <div class="stg"><div class="h"><span class="sid">WT1</span><span class="nm">Acil hijyen</span><span class="pair">W3 · W4 ↔ T1</span></div>
+          <div class="tx">Paylaşılan hesap kapanır (kişisel hesap + MFA), varsayılan parolalar değişir, TeamViewer kalkar, USB kilitlenir, 4G port yönlendirmesi kapanır.</div>
+          <div class="chips"><span class="own">Tesis</span><span class="ph p1">0–30 gün</span><span class="ref">LAB 2 · 3 · 4</span></div></div>
+        <div class="stg"><div class="h"><span class="sid">WT2</span><span class="nm">Tek kapı</span><span class="pair">W4 ↔ T1 · T3</span></div>
+          <div class="tx">İnternetin Z1'e yolu kesilir; uzak erişim yalnız Z4 jump server'dan: VPN + MFA, onaylı 2 saatlik pencere, tam kayıt. Bulut yalnız giden bağlantı kurar.</div>
+          <div class="chips"><span class="own">Tesis + entegratör</span><span class="ph p2">1–6 ay</span><span class="ref">LAB 4</span></div></div>
+        <div class="stg"><div class="h"><span class="sid">WT3</span><span class="nm">RF'yi emekliye ayır</span><span class="pair">W4 ↔ T2</span></div>
+          <div class="tx">Sabit kodlu 433 MHz yerine kayan kodlu ya da şifreli alıcı; RF yalnız "aç talebi" taşır, görevli onaylar.</div>
+          <div class="chips"><span class="own">Tesis</span><span class="ph p2">1–6 ay</span><span class="ref">LAB 3</span></div></div>
+        <div class="stg"><div class="h"><span class="sid">WT4</span><span class="nm">YZ emniyetin dışında</span><span class="pair">W6 ↔ T4</span></div>
+          <div class="tx">YZ talep eder, karar vermez: manipülasyonun etkisi sınırlanır, ARM.v19™ da MR 2023/1230 Ek I Bölüm A'daki "emniyet işlevi gören öğrenen bileşen" sınıfına girmez (AI Act ayrıca incelenir).</div>
+          <div class="chips"><span class="own">Tesis + Arma</span><span class="ph p1">tasarım kararı</span><span class="ref">LAB 7</span></div></div>
+        <div class="stg"><div class="h"><span class="sid">WT5</span><span class="nm">Önce kanıt, sonra reset</span><span class="pair">W7 ↔ T1 · T5</span></div>
+          <div class="tx">Olay rol tablosu, 15 dk ve 2 saat adımları, kayıt ve delil zinciri; yılda en az bir tatbikat.</div>
+          <div class="chips"><span class="own">Tesis</span><span class="ph p1">0–30 gün</span><span class="ref">LAB 6</span></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="footer"><span>SAFETY 4.0 BOOTCAMP · Arma Mantar Bariyer Sürümü · Bu bir eğitim çıktısıdır, resmî denetim değildir.</span><span>2 / 3</span></div>
+</section>
+
+<!-- ============================ PAGE 3 · ROADMAP ============================ -->
+<section class="page">
+  <div class="content" style="padding-top: 11mm;">
+    <h2 class="task" style="margin-top:0;">Uygulama yol haritası</h2>
+    <p class="lead">Önce maliyetsiz ve geri alınabilir adımlar, sonra mimari, en son yönetişim; her evre ölçülebilir bir ölçütle kapanır.</p>
+    <div class="road">
+      <div class="rp p1">
+        <div class="hd"><b>0–30 gün</b><span>Hızlı kazanım · prosedür ve yapılandırma</span></div>
+        <ul class="sts">
+          <li><span class="sid">WT1</span><span>Acil hijyen</span></li>
+          <li><span class="sid">WT5</span><span>Önce kanıt, sonra reset</span></li>
+          <li><span class="sid">ST1</span><span>Şüphede kapalı kal</span></li>
+          <li><span class="sid">ST2</span><span>Ağsız işletme modu</span></li>
+          <li><span class="sid">WT4</span><span>YZ emniyetin dışında (tasarım kararı)</span></li>
+          <li><span class="sid">LAB 5</span><span>Component X: otomatik mod durur, yama ≤ 72 saat</span></li>
+        </ul>
+        <div class="kpi"><span class="lbl">Başarı ölçütü</span>
+          <ul><li>Paylaşılan hesap = 0</li><li>Varsayılan parola = 0</li><li>İnternetten Z1'e açık port = 0</li><li>Olay planı onaylı, ilk tatbikat yapıldı</li></ul></div>
+      </div>
+      <div class="rp p2">
+        <div class="hd"><b>1–6 ay</b><span>Mimari · yatırım</span></div>
+        <ul class="sts">
+          <li><span class="sid">WO1</span><span>Emniyeti ayır</span></li>
+          <li><span class="sid">WO2</span><span>Yayayı gör</span></li>
+          <li><span class="sid">WT2</span><span>Tek kapı</span></li>
+          <li><span class="sid">WT3</span><span>RF'yi emekliye ayır</span></li>
+          <li><span class="sid">SO1</span><span>Çok faktörlü geçiş</span></li>
+          <li><span class="sid">SO2</span><span>Kayıttan delile</span></li>
+          <li><span class="sid">ST3</span><span>Kanıt dosyası</span></li>
+        </ul>
+        <div class="kpi"><span class="lbl">Başarı ölçütü</span>
+          <ul><li>SF-1 Z0'da, PLr e doğrulandı (GR-4)</li><li>Alan doluyken hiçbir kaynaktan gelen komut hareket ettirmiyor (GR-2 testi)</li><li>Uzak oturumların %100'ü kayıtlı</li><li>S1: 27 → 9</li></ul></div>
+      </div>
+      <div class="rp p3">
+        <div class="hd"><b>6–18 ay</b><span>Yönetişim · sözleşme</span></div>
+        <ul class="sts">
+          <li><span class="sid">SO3</span><span>Sözleşmeyle güvenlik</span></li>
+          <li><span class="sid">WO3</span><span>Yazılımı görünür kıl</span></li>
+          <li><span class="sid">WO4</span><span>YZ'ye sınır çiz</span></li>
+          <li><span class="sid">↻</span><span>Yılda bir: SWOT ve risk register yeniden gözden geçirilir</span></li>
+        </ul>
+        <div class="kpi"><span class="lbl">Başarı ölçütü</span>
+          <ul><li>SBOM teslim alındı, aylık CVE/KEV taraması</li><li>Kritik açıkta karar ≤ 72 saat</li><li>YZ yanlış kabul &lt; 1/10.000, aylık izleniyor</li><li>Destek süresi sözleşmede yazılı</li></ul></div>
+      </div>
+    </div>
+
+    <h2 class="task">Stratejilerin risk etkisi</h2>
+    <div class="chart">
+      <svg viewBox="0 0 740 162" xmlns="http://www.w3.org/2000/svg" font-family="Lato, 'Segoe UI', Arial, sans-serif">
+        <defs>
+          <marker id="ah" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#94a3b8"/></marker>
+        </defs>
+        <!-- level bands (LAB 3 scale: Düşük 1–3 · Orta 4–8 · Yüksek 9–17 · Kritik 18–27) -->
+        <rect x="300" y="24" width="44.1" height="120" fill="#f8fafc"/>
+        <rect x="344.1" y="24" width="63" height="120" fill="#f1f5f9"/>
+        <rect x="407.1" y="24" width="113.4" height="120" fill="#f8fafc"/>
+        <rect x="520.5" y="24" width="125.5" height="120" fill="#f1f5f9"/>
+        <g font-size="8.2" font-weight="900" fill="#64748b" letter-spacing="1" text-anchor="middle">
+          <text x="322" y="19.5">DÜŞÜK</text>
+          <text x="375.6" y="19.5">ORTA</text>
+          <text x="463.8" y="19.5">YÜKSEK</text>
+          <text x="583" y="19.5">KRİTİK</text>
+        </g>
+        <g stroke="#e3e8ef" stroke-width="0.8">
+          <line x1="337.8" y1="24" x2="337.8" y2="144"/><line x1="375.6" y1="24" x2="375.6" y2="144"/>
+          <line x1="413.4" y1="24" x2="413.4" y2="144"/><line x1="451.2" y1="24" x2="451.2" y2="144"/>
+          <line x1="526.8" y1="24" x2="526.8" y2="144"/><line x1="640.2" y1="24" x2="640.2" y2="144"/>
+        </g>
+        <g stroke="#eef2f6" stroke-width="1">
+          <line x1="0" y1="48" x2="740" y2="48"/><line x1="0" y1="72" x2="740" y2="72"/>
+          <line x1="0" y1="96" x2="740" y2="96"/><line x1="0" y1="120" x2="740" y2="120"/>
+        </g>
+        <!-- legend -->
+        <g font-size="9.2" fill="#334155">
+          <circle cx="5" cy="12" r="4.5" fill="#eb6834"/><text x="13" y="15.3">Bugün (LAB 3)</text>
+          <circle cx="94" cy="12" r="4.5" fill="#2a78d6"/><text x="102" y="15.3">Hedef: stratejiler sonrası (LAB 4)</text>
+        </g>
+        <!-- row labels -->
+        <g font-size="9.8" fill="#1f2a37">
+          <text x="0" y="35"><tspan font-weight="900">S1</tspan>  Paylaşılan Mobil hesabı → yaya</text>
+          <text x="0" y="59"><tspan font-weight="900">R4</tspan>  Wi-Fi + HTTP/80 → SF-1 ayarları</text>
+          <text x="0" y="83"><tspan font-weight="900">R5</tspan>  Loop'a metal plaka → düşmanca araç</text>
+          <text x="0" y="107"><tspan font-weight="900">S2</tspan>  RF kaydet-oynat → düşmanca araç</text>
+          <text x="0" y="131"><tspan font-weight="900">S3 ⚑</tspan>  USB / TeamViewer → bakımda hareket</text>
+        </g>
+        <g font-size="8.1" fill="#64748b" font-weight="700">
+          <text x="0" y="45.5">WT1 · WT2 · WO1</text>
+          <text x="0" y="69.5">WT1 · WT2 · WO1</text>
+          <text x="0" y="93.5">ST1 (sas kilidi) · SO2</text>
+          <text x="0" y="117.5">WT3 · ST1</text>
+          <text x="0" y="141.5">WT1 · WT2 · WT5</text>
+        </g>
+        <!-- arrows: today -> target -->
+        <g stroke="#94a3b8" stroke-width="1.6" marker-end="url(#ah)">
+          <line x1="633.7" y1="36" x2="421.4" y2="36"/>
+          <line x1="520.3" y1="60" x2="421.4" y2="60"/>
+          <line x1="520.3" y1="84" x2="383.6" y2="84"/>
+          <line x1="444.7" y1="108" x2="383.6" y2="108"/>
+        </g>
+        <g stroke="#fff" stroke-width="1.5">
+          <circle cx="640.2" cy="36" r="5" fill="#eb6834"/><circle cx="413.4" cy="36" r="5" fill="#2a78d6"/>
+          <circle cx="526.8" cy="60" r="5" fill="#eb6834"/><circle cx="413.4" cy="60" r="5" fill="#2a78d6"/>
+          <circle cx="526.8" cy="84" r="5" fill="#eb6834"/><circle cx="375.6" cy="84" r="5" fill="#2a78d6"/>
+          <circle cx="451.2" cy="108" r="5" fill="#eb6834"/><circle cx="375.6" cy="108" r="5" fill="#2a78d6"/>
+          <circle cx="337.8" cy="132" r="5.8" fill="#eb6834"/>
+        </g>
+        <circle cx="337.8" cy="132" r="3.1" fill="#2a78d6"/>
+        <!-- value labels -->
+        <g font-size="9.2" fill="#1f2a37">
+          <text x="649.2" y="39.2">27 · Kritik</text>
+          <text x="404.4" y="39.2" text-anchor="end">9 · Yüksek</text>
+          <text x="535.8" y="63.2">18 · Kritik</text>
+          <text x="404.4" y="63.2" text-anchor="end">9 · Yüksek</text>
+          <text x="535.8" y="87.2">18 · Kritik</text>
+          <text x="366.6" y="87.2" text-anchor="end">6 · Orta</text>
+          <text x="460.2" y="111.2">12 · Yüksek</text>
+          <text x="366.6" y="111.2" text-anchor="end">6 · Orta</text>
+          <text x="348" y="135.2">3 → 3 · Düşük ⚑  skor aynı, yol kapandı</text>
+        </g>
+        <line x1="300" y1="147" x2="646" y2="147" stroke="#cbd5e1" stroke-width="1"/>
+        <g font-size="8.2" fill="#64748b" text-anchor="middle">
+          <text x="300" y="158">0</text><text x="337.8" y="158">3</text><text x="375.6" y="158">6</text>
+          <text x="413.4" y="158">9</text><text x="451.2" y="158">12</text><text x="526.8" y="158">18</text>
+          <text x="640.2" y="158">27</text>
+        </g>
+        <text x="740" y="158" font-size="8.2" fill="#64748b" text-anchor="end">skor = L · S · E</text>
+      </svg>
+    </div>
+    <div class="note">Kalan skorların hepsi S = 3'ten gelir: siber önlemler olasılığı (L) düşürür, şiddeti asla. Şiddeti yalnız fiziksel tasarım sınırlar: SF-1'in bağımsızlığı, sas kilidi, yayanın şeritten ayrılması. S3'ün skoru değişmez; bayrak ancak emniyet testleri geçince kalkar.</div>
+
+    <h2 class="task">Dış takvim: fırsat ve tehditler ne zaman devreye giriyor?</h2>
+    <div class="tl">
+      <div class="now">Bugün · 20.10.2026</div>
+      <div class="ev thr done"><span class="d">19.03.2025</span><span class="s8">Yürürlükte</span>7545 sayılı Kanun: siber olay ve zafiyet Başkanlığa gecikmeksizin bildirilir.<span class="lk">T5 → WT5 · ST3</span></div>
+      <div class="ev done"><span class="d">11.09.2026</span><span class="s8">Yürürlükte</span>CRA Md. 14: üretici aktif istismar edilen açığı 24 s içinde bildirir.<span class="lk">O1 → SO3</span></div>
+      <div class="ev"><span class="d">09.12.2026</span><span class="s8">Aktarım tarihi</span>Ürün Sorumluluğu Direktifi: eksik güvenlik güncellemesi kusur sayılabilir.<span class="lk">O1 → SO3</span></div>
+      <div class="ev"><span class="d">20.01.2027</span><span class="s8">Uygulama</span>Makine Yönetmeliği 2023/1230: bozulmaya karşı koruma zorunlu.<span class="lk">O2 → WO1 · SO3</span></div>
+      <div class="ev"><span class="d">11.12.2027</span><span class="s8">Uygulama</span>CRA'nın tamamı: Ek I gereksinimleri, açık yönetimi, SBOM.<span class="lk">O1 → WO3 hazır</span></div>
+      <div class="ev"><span class="d">02.08.2028</span><span class="s8">Uygulama</span>AI Act Ek I yüksek risk yükümlülükleri (2026/1744 ile ertelendi).<span class="lk">O5 → WO4 hazır</span></div>
+    </div>
+    <div class="legend"><span><i style="background:#1f5fa8"></i>Fırsat (O)</span><span><i style="background:#6b46c1"></i>Tehdit (T)</span><span><i style="background:#fff;border:1.4px solid #64748b"></i>Boş daire: henüz başlamadı</span></div>
+
+    <div class="concl">
+      <h3>Sonuç</h3>
+      <p>Bu sistemin en büyük gücü fiziksel (çarpışma dayanımı, S1), en büyük zayıflığı dijital (emniyetle kumandanın aynı kartta olması, W1). Bariyeri indiren her yol bir güvenlik açığı, yükselten her yol bir emniyet tehlikesi olduğundan en yüksek getirili strateji bir yazılım ayarı değil, mimaridir: <b>SF-1'i ağdan ve YZ'den bağımsız bir katmana almak (WO1)</b>. CRA, Makine Yönetmeliği ve AI Act tesis için tedarikçiden kanıt istemenin kaldıracıdır (SO3). İlk 30 günün neredeyse maliyetsiz adımları en yüksek riskin (S1 = 27) giriş kapısı olan paylaşılan hesabı kapatır.</p>
+    </div>
+
+    <div class="box"><b>Kaynaklar:</b> CRA (AB) 2024/2847 Md. 13(8), 14, 64 · Makine Yönetmeliği (AB) 2023/1230 · Yapay Zekâ Yasası (AB) 2024/1689, (AB) 2026/1744 ile değişik · Ürün Sorumluluğu Direktifi (AB) 2024/2853 · 7545 sayılı Siber Güvenlik Kanunu (RG 19.03.2025) · 6331 sayılı İSG Kanunu · BEKRA Yönetmeliği · 6698 sayılı KVKK · CISA AA23-335A · ISO 22343-1:2023 · ISO 13849-1:2023 · IEC 62443-4-2 · IEC TR 63069 · ISO/IEC TR 5469:2024 · ürün verileri: armakontrol.com. <b>Sınır:</b> Zayıf yönlerin çoğu eğitim senaryosu varsayımıdır<span class="v">V</span>; gerçek bir kurulumda saha incelemesiyle doğrulanmalıdır.</div>
+  </div>
+  <div class="footer"><span>SAFETY 4.0 BOOTCAMP · Arma Mantar Bariyer Sürümü · Bu bir eğitim çıktısıdır, resmî denetim değildir.</span><span>3 / 3</span></div>
+</section>
+
+</body>
+</html>

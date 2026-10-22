@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<title>LAB 4 · Secure Remote Access · Arma Mantar Bariyer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&family=Literata:opsz,wght@7..72,600;7..72,700&display=swap" rel="stylesheet">
+<style>
+  @page { size: A4; margin: 0; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: #fff; }
+  body {
+    font-family: 'Lato', 'Segoe UI', Arial, sans-serif;
+    color: #1f2a37; font-size: 9.3pt; line-height: 1.4;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  }
+  .page { width: 210mm; height: 297mm; position: relative; overflow: hidden; break-after: page; }
+  .page:last-child { break-after: auto; }
+
+  .band { height: 33mm; position: relative; overflow: hidden; color: #fff;
+          background: linear-gradient(100deg, #151f33 0%, #1b2a44 50%, #2c4466 100%); }
+  .band::after { content: ''; position: absolute; right: -16mm; top: -26mm; width: 72mm; height: 72mm;
+                 border-radius: 50%; background: rgba(255,255,255,0.08); }
+  .band .icon { position: absolute; left: 14mm; top: 9mm; width: 14mm; height: 14mm; border-radius: 50%;
+                border: 1.2px solid rgba(255,255,255,.55); background: rgba(255,255,255,.08);
+                display: flex; align-items: center; justify-content: center; }
+  .band .kicker { position: absolute; left: 32mm; top: 9.5mm; font-size: 7.2pt; letter-spacing: .26em;
+                  font-weight: 700; text-transform: uppercase; opacity: .92; }
+  .band h1 { position: absolute; left: 32mm; top: 13.5mm; margin: 0; font-family: 'Literata', Georgia, serif;
+             font-weight: 700; font-size: 21pt; letter-spacing: -.01em; }
+  .band .pill { position: absolute; right: 14mm; top: 15mm; border: 1px solid rgba(255,255,255,.65);
+                border-radius: 999px; padding: 1.8mm 4.2mm; font-size: 8pt; font-weight: 700;
+                background: rgba(255,255,255,.08); z-index: 2; }
+
+  .content { padding: 5.5mm 14mm 0 14mm; }
+  .meta { display: grid; grid-template-columns: 1.7fr 1.2fr 1fr; gap: 9mm; font-size: 8pt;
+          color: #64748b; font-weight: 700; }
+  .meta div { border-bottom: 1px solid #cbd5e1; padding-bottom: 1.4mm; }
+  .meta span { font-weight: 400; color: #111827; margin-left: 2.5mm; font-size: 8.6pt; }
+
+  .context { margin-top: 4.5mm; background: #edf2f5; border-radius: 2.5mm; padding: 3.2mm 4.5mm 3.2mm 7.5mm;
+             position: relative; font-size: 8.9pt; }
+  .context::before { content: ''; position: absolute; left: 3mm; top: 3.2mm; bottom: 3.2mm; width: 1.3mm;
+                     border-radius: 1mm; background: #1f2d4d; }
+  .context .hl { color: #13786e; font-weight: 700; }
+  .context b.t { color: #13786e; }
+
+  h2.task { font-family: 'Literata', Georgia, serif; font-weight: 700; font-size: 12.5pt; margin: 4.5mm 0 2.5mm 0;
+            display: flex; align-items: center; gap: 3mm; color: #1f2a37; }
+  h2.task::after { content: ''; flex: 1; height: 1px; background: #d5dee7; }
+
+  .card { border: 1px solid #d9e2ea; border-radius: 2.5mm; padding: 2.6mm 3.4mm 2.4mm 4.6mm; position: relative; margin-bottom: 3mm; background: #fbfcfd; }
+  .card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 1.4mm; border-radius: 2.5mm 0 0 2.5mm; }
+  .card.now::before { background: #b3261e; }
+  .card.goal::before { background: #14706a; }
+  .card h3 { margin: 0 0 .6mm 0; font-family: 'Literata', Georgia, serif; font-size: 10.5pt; }
+  .card.now h3 { color: #b3261e; } .card.goal h3 { color: #14706a; }
+  .card .sub { font-size: 8pt; color: #475569; margin-bottom: 1.6mm; }
+  .card svg { width: 100%; height: auto; display: block; }
+  .legend { font-size: 7.5pt; color: #475569; margin-top: 1.2mm; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 7.9pt; }
+  th { background: #1f2d4d; color: #fff; text-align: left; font-weight: 700; padding: 1.8mm 2mm; font-size: 7.8pt; }
+  td { border: 1px solid #d9e2ea; padding: 1.5mm 2mm; vertical-align: top; color: #1f2a37; }
+  td.p { font-weight: 900; white-space: nowrap; }
+  td.today { color: #92560a; }
+  td.rk { white-space: nowrap; font-weight: 700; color: #b3261e; }
+  tr.layer td { background: #f2fbf9; }
+  td.gid { font-weight: 900; color: #1f2d4d; white-space: nowrap; }
+  .gname { display: block; font-size: 7.2pt; font-weight: 700; color: #64748b; }
+
+  .q { display: grid; grid-template-columns: 8mm 1fr; column-gap: 3mm; margin-bottom: 3mm; }
+  .num { width: 7mm; height: 7mm; border-radius: 50%; background: #1f2d4d; color: #fff;
+         font-family: 'Literata', Georgia, serif; font-weight: 700; font-size: 9.5pt;
+         display: flex; align-items: center; justify-content: center; margin-top: .3mm; }
+  .qt { font-weight: 700; color: #1f2a37; font-size: 9.4pt; margin-bottom: 1mm; }
+  .ans { color: #12324a; border-left: 2px solid #c5cfdc; padding-left: 3mm; font-size: 8.9pt; }
+  .ans p { margin: 0 0 1.2mm 0; }
+  .ans ol { margin: .4mm 0 1mm 0; padding-left: 4.5mm; }
+  .ans li { margin-bottom: .6mm; }
+  .ans b { color: #0f2a40; }
+  .verdict { display: inline-block; background: #14706a; color: #fff; font-weight: 900; border-radius: 1.6mm; padding: .6mm 2mm; font-size: 8.4pt; }
+  .verdict.bad { background: #b3261e; }
+
+  .g, .v { display: inline-block; font-size: 6.6pt; font-weight: 900; line-height: 1; padding: .55mm 1.1mm;
+           border-radius: 1mm; vertical-align: 1px; margin-left: .6mm; }
+  .g { background: #e2f3ef; color: #0f766e; border: 1px solid #9fd3c7; }
+  .v { background: #fff3dd; color: #92560a; border: 1px solid #efc983; }
+
+  .neutral { margin-top: 3mm; font-size: 8.2pt; color: #475569; font-style: italic; }
+  .box { border: 1px solid #d9e2ea; border-radius: 2.5mm; padding: 2.4mm 3.2mm; font-size: 7.8pt; margin-top: 3mm; color: #475569; }
+  .evidence { margin-top: 3.5mm; border: 1px dashed #b8c6d3; border-radius: 2.5mm; padding: 2.6mm 4mm;
+              font-size: 8.4pt; display: flex; align-items: center; gap: 3mm; background: #f7f9fb; }
+  .evidence .hl { color: #14706a; font-weight: 700; }
+
+  .footer { position: absolute; left: 14mm; right: 14mm; bottom: 8mm; border-top: 1px solid #d9e2ea;
+            padding-top: 2mm; font-size: 7.2pt; color: #64748b; display: flex; justify-content: space-between; }
+</style>
+</head>
+<body>
+
+<!-- ============================ PAGE 1 ============================ -->
+<section class="page">
+  <div class="band">
+    <div class="icon">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linejoin="round"><rect x="4.5" y="10.5" width="15" height="10" rx="2"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/></svg>
+    </div>
+    <div class="kicker">Laboratuvar 4 · Arma Mantar Bariyer · Kimya Tesisi Girişi</div>
+    <h1>Secure Remote Access</h1>
+    <div class="pill">Çıktı: Secure Architecture</div>
+  </div>
+
+  <div class="content">
+    <div class="meta">
+      <div>Ad Soyad<span>Mehmet Onur Boyraz · 245541023</span></div>
+      <div>Grup<span></span></div>
+      <div>Tarih<span>19.10.2026</span></div>
+    </div>
+
+    <div class="context">
+      <b class="t">Kavram:</b> İki katman var ve ikisi de şart. <span class="hl">Erişim güvenliği</span> girişi zorlaştırır: ara nokta, şifreli tünel, MFA + kişisel hesap, kayıt, varsayılan kapalı. <span class="hl">Emniyet bağımsızlığı</span> ise saldırgan içeri girse bile insanı korur. Bu makinede ikinci katman, LAB 1'deki SF&#8209;1'dir.
+    </div>
+
+    <h2 class="task">Görev A — mevcut → hedef</h2>
+
+    <div class="card now">
+      <h3>MEVCUT (bugün)<span class="v">V</span></h3>
+      <div class="sub">İpucu: Arma Mobil bugün 4G router üzerinden Arma Kart'a <b>DOĞRUDAN</b> ulaşıyor ve SF-1'in mantığı da aynı kartta. Dört yolun dördü de filtresiz.</div>
+      <svg viewBox="0 0 720 238" xmlns="http://www.w3.org/2000/svg" font-family="Lato, 'Segoe UI', Arial, sans-serif">
+        <defs>
+          <marker id="aR" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#b3261e"/></marker>
+          <marker id="aG" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#64748b"/></marker>
+        </defs>
+        <g font-size="9.5" fill="#1f2a37" text-anchor="middle">
+          <!-- row 1 -->
+          <rect x="0" y="6" width="128" height="40" rx="7" fill="#f4f6f9" stroke="#cbd5e1"/>
+          <text x="64" y="22" font-weight="900">Vardiya amirleri</text><text x="64" y="37" font-size="8.5">tek paylaşılan hesap <tspan fill="#b3261e" font-weight="900">!</tspan></text>
+          <rect x="150" y="6" width="140" height="40" rx="7" fill="#fdecea" stroke="#e8b4ad"/>
+          <text x="220" y="22" font-weight="900">Arma bulutu · Mobil</text><text x="220" y="37" font-size="8.5">yalnız parola, MFA yok <tspan fill="#b3261e" font-weight="900">!</tspan></text>
+          <rect x="312" y="6" width="146" height="40" rx="7" fill="#fdecea" stroke="#e8b4ad"/>
+          <text x="385" y="22" font-weight="900">4G router</text><text x="385" y="37" font-size="8.5">varsayılan parola, port yönl. <tspan fill="#b3261e" font-weight="900">!</tspan></text>
+          <!-- row 2 -->
+          <rect x="0" y="54" width="128" height="40" rx="7" fill="#f4f6f9" stroke="#cbd5e1"/>
+          <text x="64" y="70" font-weight="900">Entegratör</text><text x="64" y="85" font-size="8.5">uzak servis</text>
+          <rect x="150" y="54" width="140" height="40" rx="7" fill="#fdecea" stroke="#e8b4ad"/>
+          <text x="220" y="70" font-weight="900">TeamViewer</text><text x="220" y="85" font-size="8.5">7/24 açık <tspan fill="#b3261e" font-weight="900">!</tspan></text>
+          <rect x="312" y="54" width="146" height="40" rx="7" fill="#fdecea" stroke="#e8b4ad"/>
+          <text x="385" y="70" font-weight="900">Kulübe PC (WOC)</text><text x="385" y="85" font-size="8.5">kilitsiz USB <tspan fill="#b3261e" font-weight="900">!</tspan></text>
+          <!-- row 3 -->
+          <rect x="0" y="102" width="128" height="40" rx="7" fill="#f4f6f9" stroke="#cbd5e1"/>
+          <text x="64" y="118" font-weight="900">Şoför / ziyaretçi</text><text x="64" y="133" font-size="8.5">kapı önünde bekliyor</text>
+          <rect x="150" y="102" width="140" height="40" rx="7" fill="#fdecea" stroke="#e8b4ad"/>
+          <text x="220" y="118" font-weight="900">Kulübe Wi-Fi</text><text x="220" y="133" font-size="8.5">parolası duvarda <tspan fill="#b3261e" font-weight="900">!</tspan></text>
+          <rect x="312" y="102" width="146" height="40" rx="7" fill="#fdecea" stroke="#e8b4ad"/>
+          <text x="385" y="118" font-weight="900">Kulübe ağı</text><text x="385" y="133" font-size="8.5">filtresiz, HTTP/80 açık <tspan fill="#b3261e" font-weight="900">!</tspan></text>
+          <!-- row 4 -->
+          <rect x="0" y="150" width="128" height="40" rx="7" fill="#f4f6f9" stroke="#cbd5e1"/>
+          <text x="64" y="166" font-weight="900">Herhangi biri</text><text x="64" y="181" font-size="8.5">kapı yakınında</text>
+          <rect x="150" y="150" width="140" height="40" rx="7" fill="#fdecea" stroke="#e8b4ad"/>
+          <text x="220" y="166" font-weight="900">RF kumanda</text><text x="220" y="181" font-size="8.5">433 MHz sabit kod <tspan fill="#b3261e" font-weight="900">!</tspan></text>
+
+          <!-- Arma Kart -->
+          <rect x="482" y="6" width="130" height="184" rx="9" fill="#fbe9e7" stroke="#b3261e" stroke-width="2.4"/>
+          <text x="547" y="66" font-size="11.5" font-weight="900">Arma Kart</text>
+          <text x="547" y="81" font-size="9">[EE51KAR]</text>
+          <text x="547" y="104" font-size="9">normal kumanda</text>
+          <text x="547" y="119" font-size="9.5" font-weight="900" fill="#b3261e">+ SF-1 mantığı</text>
+          <text x="547" y="133" font-size="9.5" font-weight="900" fill="#b3261e">aynı kartta !</text>
+          <text x="547" y="158" font-size="8.5">HTTP/80 ·</text>
+          <text x="547" y="171" font-size="8.5">varsayılan parola <tspan fill="#b3261e" font-weight="900">!</tspan></text>
+          <!-- sensors -->
+          <rect x="482" y="200" width="130" height="32" rx="7" fill="#eef2f5" stroke="#cbd5e1"/>
+          <text x="547" y="214" font-size="8.5" font-weight="700">loop + fotosel</text><text x="547" y="226" font-size="8">fotosel bypass'ta <tspan fill="#b3261e" font-weight="900">!</tspan></text>
+          <!-- hydraulics -->
+          <rect x="632" y="70" width="88" height="56" rx="7" fill="#1f2d4d"/>
+          <text x="676" y="94" font-size="9" font-weight="900" fill="#fff">Hidrolik ünite</text><text x="676" y="108" font-size="8.5" fill="#dbe4f0">→ bariyer ×3</text>
+        </g>
+        <g stroke="#b3261e" stroke-width="1.6" fill="none">
+          <line x1="129" y1="26" x2="148" y2="26" marker-end="url(#aR)"/><line x1="291" y1="26" x2="310" y2="26" marker-end="url(#aR)"/><line x1="459" y1="26" x2="480" y2="26" marker-end="url(#aR)"/>
+          <line x1="129" y1="74" x2="148" y2="74" marker-end="url(#aR)"/><line x1="291" y1="74" x2="310" y2="74" marker-end="url(#aR)"/><line x1="459" y1="74" x2="480" y2="74" marker-end="url(#aR)"/>
+          <line x1="129" y1="122" x2="148" y2="122" marker-end="url(#aR)"/><line x1="291" y1="122" x2="310" y2="122" marker-end="url(#aR)"/><line x1="459" y1="122" x2="480" y2="122" marker-end="url(#aR)"/>
+          <line x1="129" y1="170" x2="148" y2="170" marker-end="url(#aR)"/><line x1="291" y1="170" x2="480" y2="170" marker-end="url(#aR)"/>
+          <line x1="547" y1="200" x2="547" y2="192" marker-end="url(#aR)"/>
+        </g>
+        <line x1="613" y1="98" x2="630" y2="98" stroke="#64748b" stroke-width="1.6" marker-end="url(#aG)"/>
+      </svg>
+    </div>
+
+    <div class="card goal">
+      <h3>HEDEF (beş ilkeyle yeniden tasarım)</h3>
+      <div class="sub">Her dış yol önce Z4'te sonlanıyor; Arma Kart'a yalnız izinli komutlar ulaşıyor. Hiçbir komut, Z0'daki SF-1'in izni olmadan bariyeri hareket ettiremiyor.</div>
+      <svg viewBox="0 0 720 286" xmlns="http://www.w3.org/2000/svg" font-family="Lato, 'Segoe UI', Arial, sans-serif">
+        <defs>
+          <marker id="aT" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#14706a"/></marker>
+          <marker id="aN" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#1f2d4d"/></marker>
+        </defs>
+        <g font-size="9.5" fill="#1f2a37" text-anchor="middle">
+          <!-- sources -->
+          <rect x="0" y="6" width="120" height="40" rx="7" fill="#f4f6f9" stroke="#cbd5e1"/>
+          <text x="60" y="22" font-weight="900">Vardiya amiri</text><text x="60" y="37" font-size="8.5">kişisel hesap + MFA</text>
+          <rect x="0" y="54" width="120" height="40" rx="7" fill="#f4f6f9" stroke="#cbd5e1"/>
+          <text x="60" y="70" font-weight="900">Entegratör</text><text x="60" y="85" font-size="8.5">kişisel hesap + MFA</text>
+          <rect x="0" y="102" width="120" height="40" rx="7" fill="#f4f6f9" stroke="#cbd5e1"/>
+          <text x="60" y="118" font-weight="900">Şoför / ziyaretçi</text><text x="60" y="133" font-size="8.5">misafir</text>
+          <rect x="0" y="150" width="120" height="40" rx="7" fill="#f4f6f9" stroke="#cbd5e1"/>
+          <text x="60" y="166" font-weight="900">Görevli</text><text x="60" y="181" font-size="8.5">kapıda</text>
+          <!-- transport -->
+          <rect x="138" y="6" width="128" height="40" rx="7" fill="#e3f3ef" stroke="#9fd3c7"/>
+          <text x="202" y="22" font-weight="900">Arma bulutu</text><text x="202" y="37" font-size="8.5">yalnız giden bağlantı</text>
+          <rect x="138" y="54" width="128" height="40" rx="7" fill="#e3f3ef" stroke="#9fd3c7"/>
+          <text x="202" y="70" font-weight="900">VPN</text><text x="202" y="85" font-size="8.5">yalnız Z4'e, içeri port yok</text>
+          <rect x="138" y="102" width="128" height="40" rx="7" fill="#f1f5f9" stroke="#cbd5e1"/>
+          <text x="202" y="118" font-weight="900">Misafir Wi-Fi (Z5)</text><text x="202" y="133" font-size="8.5">endüstriyel ağa yol yok</text>
+          <rect x="138" y="150" width="128" height="40" rx="7" fill="#e3f3ef" stroke="#9fd3c7"/>
+          <text x="202" y="166" font-weight="900">RF kumanda</text><text x="202" y="181" font-size="8.5">kayan kod · yalnız "aç talebi"</text>
+          <!-- Z4 -->
+          <rect x="284" y="6" width="134" height="88" rx="8" fill="#f3eefc" stroke="#7c5cc4" stroke-width="1.4"/>
+          <text x="351" y="23" font-size="8.5" font-weight="900" fill="#5b3fa5">Z4 · DMZ</text>
+          <text x="351" y="40" font-weight="900">Komut aracısı</text>
+          <text x="351" y="53" font-weight="900">+ jump server</text>
+          <text x="351" y="69" font-size="8.5">tam oturum kaydı</text>
+          <text x="351" y="82" font-size="8.5">onaylı · 2 saatlik pencere</text>
+          <!-- Z3 -->
+          <rect x="436" y="6" width="118" height="88" rx="8" fill="#eef4fb" stroke="#3b82c4" stroke-width="1.4"/>
+          <text x="495" y="23" font-size="8.5" font-weight="900" fill="#1d5f99">Z3 · Kulübe PC</text>
+          <text x="495" y="40" font-weight="900">WOC</text>
+          <text x="495" y="55" font-size="8.5">görevli onaylar</text>
+          <text x="495" y="70" font-size="8.5">C3 duvarı: yalnız</text>
+          <text x="495" y="83" font-size="8.5">aç / kapat / durum</text>
+          <!-- Z1 card -->
+          <rect x="572" y="6" width="148" height="184" rx="9" fill="#e3f3ef" stroke="#1a9c8f" stroke-width="2"/>
+          <text x="646" y="62" font-size="8.5" font-weight="900" fill="#13786e">Z1</text>
+          <text x="646" y="80" font-size="11.5" font-weight="900">Arma Kart</text>
+          <text x="646" y="98" font-size="9">yalnız normal kumanda</text>
+          <text x="646" y="120" font-size="8.5">ayar ve firmware</text>
+          <text x="646" y="133" font-size="8.5">yalnız yerinde,</text>
+          <text x="646" y="146" font-size="8.5">anahtarlı bakım modunda</text>
+          <!-- bottom tier -->
+          <rect x="0" y="232" width="170" height="48" rx="8" fill="#eef2f5" stroke="#cbd5e1"/>
+          <text x="85" y="252" font-weight="900">Loop + fotosel + radar</text><text x="85" y="267" font-size="8.5">tüm hareket alanı (GR-6)</text>
+          <rect x="206" y="232" width="200" height="48" rx="8" fill="#fbe9e7" stroke="#b3261e" stroke-width="2"/>
+          <text x="306" y="252" font-weight="900" fill="#b3261e">Z0 · SF-1 · ağ yok</text><text x="306" y="267" font-size="8.5">izin = talep ∧ ¬varlık</text>
+          <rect x="440" y="232" width="132" height="48" rx="8" fill="#eef2f5" stroke="#cbd5e1"/>
+          <text x="506" y="252" font-weight="900">Pompa kontaktörü ×2</text><text x="506" y="267" font-size="8.5">+ valf enerjisi</text>
+          <rect x="600" y="232" width="120" height="48" rx="8" fill="#1f2d4d"/>
+          <text x="660" y="261" font-weight="900" fill="#fff">Bariyer ×3</text>
+          <!-- label on request line -->
+          <rect x="400" y="191" width="168" height="15" rx="7.5" fill="#fff" stroke="#cbd5e1"/>
+          <text x="484" y="201.5" font-size="8" font-weight="900" fill="#1f2d4d">yükseltme talebi · kablolu (C1)</text>
+        </g>
+        <g stroke="#14706a" stroke-width="1.6" fill="none">
+          <line x1="121" y1="26" x2="136" y2="26" marker-end="url(#aT)"/><line x1="267" y1="26" x2="282" y2="26" marker-end="url(#aT)"/>
+          <line x1="121" y1="74" x2="136" y2="74" marker-end="url(#aT)"/><line x1="267" y1="74" x2="282" y2="74" marker-end="url(#aT)"/>
+          <line x1="419" y1="50" x2="434" y2="50" marker-end="url(#aT)"/>
+          <line x1="555" y1="50" x2="570" y2="50" marker-end="url(#aT)"/>
+          <line x1="121" y1="122" x2="136" y2="122" marker-end="url(#aT)"/>
+          <line x1="121" y1="170" x2="136" y2="170" marker-end="url(#aT)"/><line x1="267" y1="170" x2="570" y2="170" marker-end="url(#aT)"/>
+        </g>
+        <!-- blocked from Z5 -->
+        <g stroke="#b3261e" stroke-width="1.8">
+          <line x1="268" y1="122" x2="292" y2="122" stroke-dasharray="4 3"/>
+          <path d="M296 116 L308 128 M308 116 L296 128" stroke-width="2.2"/>
+        </g>
+        <g stroke="#1f2d4d" stroke-width="1.6" fill="none">
+          <path d="M646 190 V208 H306 V230" marker-end="url(#aN)"/>
+          <line x1="171" y1="256" x2="204" y2="256" marker-end="url(#aN)"/>
+          <line x1="407" y1="256" x2="438" y2="256" marker-end="url(#aN)"/>
+          <line x1="573" y1="256" x2="598" y2="256" marker-end="url(#aN)"/>
+        </g>
+      </svg>
+      <div class="legend"><b style="color:#14706a">━</b> izinli, kontrollü yol · <b style="color:#b3261e">✕</b> yol yok · <b style="color:#1f2d4d">━</b> emniyet zinciri. Arma Kart yalnız "yükseltme talebi" gönderebilir; kararı Z0'daki SF-1 verir.</div>
+    </div>
+  </div>
+
+  <div class="footer"><span>SAFETY 4.0 BOOTCAMP · Arma Mantar Bariyer Sürümü · Bu bir eğitim çıktısıdır, resmî denetim değildir.</span><span>1 / 3</span></div>
+</section>
+
+<!-- ============================ PAGE 2 ============================ -->
+<section class="page">
+  <div class="content" style="padding-top: 11mm;">
+    <h2 class="task" style="margin-top:0;">Beş ilke bu makinede nasıl uygulandı?</h2>
+    <table>
+      <thead><tr><th style="width:17%">İlke</th><th style="width:22%">Bugün<span class="v">V</span></th><th>Hedef</th><th style="width:10%">Kapattığı risk</th></tr></thead>
+      <tbody>
+        <tr><td class="p">1 · Ara nokta</td><td class="today">TeamViewer kulübe PC'sine, 4G Arma Kart'a doğrudan</td><td>Z4'te jump server + mobil komut aracısı; hiçbir dış oturum Z1 ya da Z3'e doğrudan değmez</td><td class="rk">S1 · S3</td></tr>
+        <tr><td class="p">2 · Şifreli tünel</td><td class="today">4G router'da port yönlendirme</td><td>VPN yalnız Z4'e; Arma bulutuna yalnız giden bağlantı; içeri hiçbir port açık değil</td><td class="rk">S1 · R4</td></tr>
+        <tr><td class="p">3 · Kimlik</td><td class="today">Tek paylaşılan hesap, yalnız parola</td><td>Herkes kendi hesabıyla + MFA. Ayrılan personelin hesabı aynı gün kapanır; servis hesabı bir kişiye bağlıdır</td><td class="rk">S1</td></tr>
+        <tr><td class="p">4 · Kayıt</td><td class="today">Yok</td><td>Tam oturum kaydı (video + komut). Her bariyer komutu kullanıcı, zaman ve kaynakla kaydedilir; kayıtlar güvenlik merkezinde, silinemez depoda tutulur (LAB 6'nın kanıtı)</td><td class="rk">S1 · S3</td></tr>
+        <tr><td class="p">5 · Varsayılan kapalı</td><td class="today">7/24 açık</td><td>Servis erişimi: talep + vardiya amiri onayı + 2 saatlik pencere, sonra otomatik kapanır. Mobil "aç" isteği görevli onaylamadan geçmez</td><td class="rk">S1 · S3</td></tr>
+        <tr><td class="p">+1 · Yetki kapsamı</td><td class="today">Uzaktan tam yetki (aç, kapat, ayar)</td><td>Uzaktan yalnız "aç talebi" ve rapor. Ayar ve firmware yalnız yerinde, anahtarlı bakım modunda (LAB 2)</td><td class="rk">R4</td></tr>
+        <tr class="layer"><td class="p">2. katman · Emniyet bağımsızlığı</td><td class="today">SF-1 Arma Kart'ta, uzaktan ulaşılabilir</td><td>SF-1 Z0'da; ona giden hiçbir ağ yolu yok. Her komut, kaynağı ne olursa olsun varlık algılamayla VE'lenir (LAB 1)</td><td class="rk">S1 · R4 · S3</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:7.8pt;color:#475569;margin:1.4mm 0 0 0;">Kavram kutusundaki altı başlığı beş ilkeye indirdik: MFA ile kişisel hesap tek bir "kimlik" ilkesi altında. RF kayan kod ve Wi-Fi'nin Z5'e taşınması uzaktan erişim değil ama şemada aynı mantıkla kapatıldı.</p>
+
+    <h2 class="task">Görev B — functional safety köprüsü</h2>
+
+    <div class="q">
+      <div class="num">1</div>
+      <div>
+        <div class="qt">Saldırgan tüm önlemlere rağmen içeri girerse: emniyet fonksiyonu etkilenir mi? Neden?</div>
+        <div class="ans">
+          <p><span class="verdict">Hedef mimaride: HAYIR — insan korunur.</span></p>
+          <ol>
+            <li><b>Ulaşamaz:</b> SF-1 Z0'da ve hiçbir ağa bağlı değil. Ayarlarına uzaktan ulaşılamaz, firmware'i uzaktan değiştirilemez.</li>
+            <li><b>Komut ≠ hareket:</b> içeri giren saldırgan en fazla bir "yükseltme talebi" üretebilir. SF-1 bu talebi varlık algılamayla VE'ler; hareket alanında insan ya da araç varsa bariyer kıpırdamaz.</li>
+            <li><b>Bakım ve yeniden başlatma:</b> bakım modunda uzaktan gelen her komut reddedilir; enerji ya da iletişim gidip gelince bariyer kendiliğinden yükselmez (SF-3).</li>
+          </ol>
+          <p><b>Dürüst sınırlar:</b> (a) <b>Güvenlik</b> yine de etkilenebilir: saldırgan bariyeri indirtebilir. Bunu emniyet değil sas kilidi ve görevli onayı karşılar. (b) SF-1 yalnız algıladığı kadar korur; algılama alanında bir boşluk varsa saldırgan o boşluğu kullanır (GR-6). (c) <span class="verdict bad">Bugünkü mimaride: EVET</span> — SF-1'in mantığı uzaktan ulaşılabilen Arma Kart'ta<span class="v">V</span>.</p>
+        </div>
+      </div>
+    </div>
+
+    <h2 class="task">Bu mimarinin LAB 3 risklerine etkisi</h2>
+    <table>
+      <thead><tr><th style="width:9%">Risk</th><th style="width:15%">LAB 3 skoru</th><th style="width:15%">Hedef mimaride</th><th>Ne değişti?</th></tr></thead>
+      <tbody>
+        <tr><td class="rk">S1</td><td>27 · Kritik</td><td><b>9</b> · Yüksek</td><td>Paylaşılan hesap, açık port ve doğrudan yol kalktı (L 3 → 1). Kalan 9, insan maruziyetinin (E = 3) sonucu.</td></tr>
+        <tr><td class="rk">R4</td><td>18 · Kritik</td><td><b>9</b> · Yüksek</td><td>Wi-Fi Z5'te; SF-1 ayarlarına ağdan ulaşılamıyor (L 2 → 1).</td></tr>
+        <tr><td class="rk">R5</td><td>18 · Kritik</td><td><b>6</b> · Orta</td><td>Bu föyün değil, sas kilidinin etkisi: emniyet tetiklense de iki hat birden inmiyor.</td></tr>
+        <tr><td class="rk">S2</td><td>12 · Yüksek</td><td><b>6</b> · Orta</td><td>RF kayan kodlu ve yalnız "aç talebi" taşıyor; sas kilidi ikinci engel.</td></tr>
+        <tr><td class="rk">S3 ⚑</td><td>3 · Düşük ⚑</td><td><b>3</b> ⚑</td><td>Skor aynı, ama yol kapandı: TeamViewer yok, USB kilitli, bakım modu uzak komutu reddediyor. Bayrak emniyet testleriyle kapanır.</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:7.8pt;color:#475569;margin:1.4mm 0 0 0;">Hiçbir satırda S değişmiyor: erişim güvenliği olasılığı düşürür, şiddeti düşürmez. Şiddet karşısında insanı koruyan tek şey ikinci katman, yani SF-1'dir.</p>
+  </div>
+
+  <div class="footer"><span>SAFETY 4.0 BOOTCAMP · Arma Mantar Bariyer Sürümü · Bu bir eğitim çıktısıdır, resmî denetim değildir.</span><span>2 / 3</span></div>
+</section>
+
+<!-- ============================ PAGE 3 ============================ -->
+<section class="page">
+  <div class="content" style="padding-top: 11mm;">
+    <div class="q">
+      <div class="num">2</div>
+      <div>
+        <div class="qt">SF-1'in (varlık algılanınca yükselme engeli) uzaktan erişim yollarından etkilenmemesi için GEREKSİNİMİ yazın (çözümü değil).</div>
+        <div class="ans"><p>Gereksinimler "ne olmalı" sorusunu cevaplıyor, "nasıl yapılır"ı değil. Her biri test edilebilir ve LAB 3'teki bir riske bağlı.</p></div>
+      </div>
+    </div>
+
+    <table>
+      <thead><tr><th style="width:12%">ID</th><th style="width:46%">Gereksinim</th><th style="width:9%">Risk</th><th>Nasıl doğrulanır?</th></tr></thead>
+      <tbody>
+        <tr><td class="gid">GR-1<span class="gname">Bağımsızlık</span></td><td>SF-1'in kararı, normal kumanda sisteminden ve tüm uzaktan erişim yollarından bağımsız bir mantıkta verilmelidir. Bu mantık hiçbir ağ arayüzü üzerinden yapılandırılamamalı, devre dışı bırakılamamalı ve güncellenememelidir.</td><td class="rk">S1 · R4</td><td>İnceleme + port taraması: SF-1 tarafında açık ağ arayüzü bulunmamalı</td></tr>
+        <tr><td class="gid">GR-2<span class="gname">Komut kapısı</span></td><td>Kaynağı ne olursa olsun (yerel buton, WOC, Arma Mobil, RF, YZ, yangın sistemi) hiçbir yükseltme komutu, SF-1 izin vermeden hareket üretmemelidir.</td><td class="rk">S1 · S2</td><td>Test: algılama alanı doluyken her kaynaktan komut gönder → hareket olmamalı</td></tr>
+        <tr><td class="gid">GR-3<span class="gname">Değişiklik kontrolü</span></td><td>SF-1 parametrelerindeki (algılama hassasiyeti, gecikme, bypass) her değişiklik yalnız yerinde, yetkili bir kişi tarafından ve fiziksel bir izinle yapılabilmelidir. Değişiklik kaydedilmeli; ardından fonksiyon testi zorunlu olmalıdır.</td><td class="rk">R4</td><td>Denetim: her değişiklik kaydının karşısında bir test kaydı olmalı; parametre imzası (CRC) referansla aynı olmalı</td></tr>
+        <tr><td class="gid">GR-4<span class="gname">Bağımsız güvenilirlik</span></td><td>SF-1'in PLr = e seviyesi, ağın, bulutun, mobil uygulamanın ya da kulübe PC'sinin arızalanması veya ele geçirilmesi durumunda da korunmalıdır.</td><td class="rk">tümü</td><td>Analiz: SF-1'in tehlikeli arıza yollarında (FMEA) hiçbir BT bileşeni yer almamalı</td></tr>
+        <tr><td class="gid">GR-5<span class="gname">Güvenli yeniden başlama</span></td><td>İletişim kaybı, enerji dönüşü ya da kontrol sisteminin yeniden başlaması bariyerin kendiliğinden hareket etmesine yol açmamalıdır.</td><td class="rk">S3</td><td>Test: güç kes-ver, ağ bağlantısını kopar → hareket olmamalı</td></tr>
+        <tr><td class="gid">GR-6<span class="gname">Kapsama</span></td><td>SF-1'in algılama alanı, bariyerin hareket hacminin tamamını ve bu hacimdeki araç, yaya, bisikletli ve motosikletliyi kapsamalıdır.</td><td class="rk">S1 · R4</td><td>Test: yaya maketi ve bisiklet her konumda algılanmalı</td></tr>
+        <tr><td class="gid">GR-7<span class="gname">Bakım modu</span></td><td>Bakım modundayken uzaktan gelen hiçbir komut hareket üretmemelidir. Bakım modu yalnız yerinde ve fiziksel olarak açılıp kapatılabilmelidir.</td><td class="rk">S3</td><td>Yıllık tatbikat: bakım modunda WOC ve Mobil'den komut → hareket olmamalı</td></tr>
+      </tbody>
+    </table>
+
+    <div class="neutral">Tarafsızlık notu: Bu föy çözüm tasarlatmaz; gereksinimi tanımlatır. Görev B'deki maddeler "ne olmalı" sorusunu cevaplar. Hangi cihazla, hangi mimariyle karşılanacağı üreticinin ve entegratörün tasarım kararıdır.</div>
+
+    <div class="box"><span class="g">G</span> üreticinin sitesinde yazan bilgi · <span class="v">V</span> eğitim senaryosu varsayımı, <b>Arma ürünü hakkında iddia değildir</b>. Dayanaklar: IEC 62443-3-3 (SR 1.1 kullanıcı kimlik doğrulama · SR 1.13 güvenilmeyen ağlardan erişim · SR 2.6 uzak oturum sonlandırma · SR 2.8 denetlenebilir olaylar · SR 5.1–5.2 bölümleme ve bölge sınırı) · IEC TR 63069 (güvenlik önlemleri emniyet fonksiyonunu bozmamalı) · ISO 13849-1:2023 · AB Makine Yönetmeliği 2023/1230 Ek III 1.1.9 ve 1.2.1.</div>
+
+    <div class="evidence">
+      <svg width="16" height="18" viewBox="0 0 16 18" fill="none" stroke="#14706a" stroke-width="1.6"><path d="M2 1.5h7.5L14 6v10.5H2z"/><path d="M9.5 1.5V6H14"/></svg>
+      <span>Bu föyün çıktısı <span class="hl">Secure Architecture</span> → Evidence Pack <span class="hl">EP 02 + EP 06</span> başlığına oturur.</span>
+    </div>
+  </div>
+
+  <div class="footer"><span>SAFETY 4.0 BOOTCAMP · Arma Mantar Bariyer Sürümü · Bu bir eğitim çıktısıdır, resmî denetim değildir.</span><span>3 / 3</span></div>
+</section>
+
+</body>
+</html>

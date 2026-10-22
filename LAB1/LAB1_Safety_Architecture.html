@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<title>LAB 1 · Safety Architecture · Arma Mantar Bariyer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&family=Literata:opsz,wght@7..72,600;7..72,700&display=swap" rel="stylesheet">
+<style>
+  @page { size: A4; margin: 0; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: #fff; }
+  body {
+    font-family: 'Lato', 'Segoe UI', Arial, sans-serif;
+    color: #1f2a37; font-size: 9.3pt; line-height: 1.4;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  }
+  .page { width: 210mm; height: 297mm; position: relative; overflow: hidden; break-after: page; }
+  .page:last-child { break-after: auto; }
+
+  /* header band */
+  .band { height: 33mm; position: relative; overflow: hidden; color: #fff;
+          background: linear-gradient(100deg, #172238 0%, #1a3047 46%, #2b7a76 100%); }
+  .band::after { content: ''; position: absolute; right: -16mm; top: -26mm; width: 72mm; height: 72mm;
+                 border-radius: 50%; background: rgba(255,255,255,0.09); }
+  .band .icon { position: absolute; left: 14mm; top: 9mm; width: 14mm; height: 14mm; border-radius: 50%;
+                border: 1.2px solid rgba(255,255,255,.55); background: rgba(255,255,255,.08);
+                display: flex; align-items: center; justify-content: center; }
+  .band .kicker { position: absolute; left: 32mm; top: 9.5mm; font-size: 7.2pt; letter-spacing: .26em;
+                  font-weight: 700; text-transform: uppercase; opacity: .92; }
+  .band h1 { position: absolute; left: 32mm; top: 13.5mm; margin: 0; font-family: 'Literata', Georgia, serif;
+             font-weight: 700; font-size: 21pt; letter-spacing: -.01em; }
+  .band .pill { position: absolute; right: 14mm; top: 15mm; border: 1px solid rgba(255,255,255,.65);
+                border-radius: 999px; padding: 1.8mm 4.2mm; font-size: 8pt; font-weight: 700;
+                background: rgba(255,255,255,.08); z-index: 2; }
+
+  .content { padding: 5.5mm 14mm 0 14mm; }
+  .meta { display: grid; grid-template-columns: 1.7fr 1.2fr 1fr; gap: 9mm; font-size: 8pt;
+          color: #64748b; font-weight: 700; }
+  .meta div { border-bottom: 1px solid #cbd5e1; padding-bottom: 1.4mm; }
+  .meta span { font-weight: 400; color: #111827; margin-left: 2.5mm; font-size: 8.6pt; }
+
+  .context { margin-top: 4.5mm; background: #edf2f5; border-radius: 2.5mm; padding: 3.2mm 4.5mm 3.2mm 7.5mm;
+             position: relative; font-size: 8.9pt; }
+  .context::before { content: ''; position: absolute; left: 3mm; top: 3.2mm; bottom: 3.2mm; width: 1.3mm;
+                     border-radius: 1mm; background: #1a9c8f; }
+  .context b.t { color: #13786e; }
+  .context .hl { color: #13786e; font-weight: 700; }
+  .scenario { margin-top: 1.8mm; font-size: 8pt; color: #475569; }
+
+  .diagram { margin-top: 3.5mm; }
+  .diagram svg { width: 100%; height: auto; display: block; }
+  .callout { margin-top: 1.5mm; font-size: 8pt; color: #7f1d1d; background: #fdf0ee; border-radius: 2mm;
+             padding: 1.8mm 3mm; border-left: 3px solid #b3261e; }
+
+  h2.task { font-family: 'Literata', Georgia, serif; font-weight: 700; font-size: 12.5pt; margin: 4.5mm 0 2.5mm 0;
+            display: flex; align-items: center; gap: 3mm; color: #1f2a37; }
+  h2.task::after { content: ''; flex: 1; height: 1px; background: #d5dee7; }
+
+  .q { display: grid; grid-template-columns: 8mm 1fr; column-gap: 3mm; margin-bottom: 3mm; }
+  .num { width: 7mm; height: 7mm; border-radius: 50%; background: #1a9c8f; color: #fff;
+         font-family: 'Literata', Georgia, serif; font-weight: 700; font-size: 9.5pt;
+         display: flex; align-items: center; justify-content: center; margin-top: .3mm; }
+  .qt { font-weight: 700; color: #1f2a37; font-size: 9.4pt; margin-bottom: 1mm; }
+  .ans { color: #12324a; border-left: 2px solid #bfdcd8; padding-left: 3mm; font-size: 8.9pt; }
+  .ans p { margin: 0 0 1.2mm 0; }
+  .ans ul { margin: .5mm 0 1mm 0; padding-left: 4.5mm; }
+  .ans li { margin-bottom: .6mm; }
+  .ans b { color: #0f2a40; }
+
+  .g, .v { display: inline-block; font-size: 6.6pt; font-weight: 900; line-height: 1; padding: .55mm 1.1mm;
+           border-radius: 1mm; vertical-align: 1px; margin-left: .6mm; }
+  .g { background: #e2f3ef; color: #0f766e; border: 1px solid #9fd3c7; }
+  .v { background: #fff3dd; color: #92560a; border: 1px solid #efc983; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 7.9pt; }
+  th { background: #1f2d4d; color: #fff; text-align: left; font-weight: 700; padding: 2mm 2mm; font-size: 7.8pt; }
+  td { border: 1px solid #d9e2ea; padding: 1.8mm 2mm; vertical-align: top; color: #1f2a37; }
+  tr.sub td { background: #f6f8fa; color: #475569; }
+  td .id { font-weight: 900; color: #b3261e; display: block; }
+  .plr { font-weight: 900; color: #1f2d4d; white-space: nowrap; }
+
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 5mm; margin-top: 3.5mm; }
+  .box { border: 1px solid #d9e2ea; border-radius: 2.5mm; padding: 2.6mm 3.2mm; font-size: 8.1pt; }
+  .box h3 { margin: 0 0 1.8mm 0; font-family: 'Literata', Georgia, serif; font-size: 10pt; color: #1f2a37; }
+  .box p { margin: 0 0 1.2mm 0; }
+  .box ol { margin: 0; padding-left: 4.2mm; }
+  .box li { margin-bottom: .8mm; }
+
+  .logic { font-family: Consolas, 'Courier New', monospace; font-size: 8.4pt; background: #0f1b2d; color: #d7e6f5;
+           border-radius: 2mm; padding: 2.6mm 3.2mm; line-height: 1.5; margin: 1mm 0 2mm 0; white-space: pre; }
+  .logic .k { color: #7dd3c7; font-weight: 700; }
+  .logic .c { color: #8aa0b8; }
+  .evidence { margin-top: 4mm; border: 1px dashed #b8c6d3; border-radius: 2.5mm; padding: 2.6mm 4mm;
+              font-size: 8.4pt; display: flex; align-items: center; gap: 3mm; background: #f7f9fb; }
+  .evidence .hl { color: #13786e; font-weight: 700; }
+
+  .footer { position: absolute; left: 14mm; right: 14mm; bottom: 8mm; border-top: 1px solid #d9e2ea;
+            padding-top: 2mm; font-size: 7.2pt; color: #64748b; display: flex; justify-content: space-between; }
+</style>
+</head>
+<body>
+
+<!-- ============================ PAGE 1 ============================ -->
+<section class="page">
+  <div class="band">
+    <div class="icon">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linejoin="round"><path d="M12 2.5 19.5 5.5V11c0 4.6-3.2 8.3-7.5 10-4.3-1.7-7.5-5.4-7.5-10V5.5Z"/></svg>
+    </div>
+    <div class="kicker">Laboratuvar 1 · Arma Mantar Bariyer · Kimya Tesisi Girişi</div>
+    <h1>Safety Architecture</h1>
+    <div class="pill">Çıktı: Safety Function Map</div>
+  </div>
+
+  <div class="content">
+    <div class="meta">
+      <div>Ad Soyad<span>Mehmet Onur Boyraz · 245541023</span></div>
+      <div>Grup<span></span></div>
+      <div>Tarih<span>19.10.2026</span></div>
+    </div>
+
+    <div class="context">
+      <b class="t">Arma bağlamı:</b> Yerden 6–8 sn'de 900 mm yükselen Ø273 mm çelik mantar bariyer<span class="g">G</span>, üstünde ya da önünde bulunan araç ve insan için ezilme–çarpma tehlikesidir; koruma <span class="hl">loop dedektör + fotosel → emniyet mantığı → pompa/valf enerjisinin kesilmesi</span> zinciridir. Ve bu bariyer <span class="hl">Arma WOC / Arma Mobil ile her yerden yönetilebiliyor</span><span class="g">G</span>, ARM.v19™ yapay zekâ bazı kararları kendisi veriyor<span class="g">G</span> — sorular oraya gidecek.
+      <div class="scenario"><b>Kurulum</b><span class="v">V</span> hayali, BEKRA (Seveso) kapsamındaki kimya tesisinin ana araç girişi · 4,5 m şeritte 3 bariyer · normal konum YUKARIDA; her yetkili araç için iner, araç geçip loop boşalınca yeniden yükselir · 24/7 tanker, personel aracı ve yaya trafiği.</div>
+    </div>
+
+    <div class="diagram">
+      <svg viewBox="-10 0 720 232" xmlns="http://www.w3.org/2000/svg" font-family="Lato, 'Segoe UI', Arial, sans-serif">
+        <defs>
+          <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#64748b"/></marker>
+          <marker id="arrO" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#e8562a"/></marker>
+          <marker id="arrA" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#e5a00d"/></marker>
+        </defs>
+
+        <!-- row 1 -->
+        <text x="0" y="16" font-size="9" font-weight="900" fill="#1f2a37" letter-spacing="1.2">NORMAL KONTROL YOLU · geçiş</text>
+        <path d="M620 30 V20 H255 V27" fill="none" stroke="#e8562a" stroke-width="1.6" marker-end="url(#arrO)"/>
+        <text x="440" y="16" font-size="8.5" fill="#c2410c" text-anchor="middle" font-weight="700">komut: aç / kapat / rapor</text>
+
+        <rect x="0" y="30" width="150" height="50" rx="8" fill="#d6e3ee"/>
+        <text x="75" y="51" font-size="10.5" font-weight="700" fill="#1f2a37" text-anchor="middle">Kart okuyucu · Plaka</text>
+        <text x="75" y="66" font-size="10.5" font-weight="700" fill="#1f2a37" text-anchor="middle">tanıma · RF kumanda</text>
+        <line x1="154" y1="55" x2="176" y2="55" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
+
+        <rect x="180" y="30" width="150" height="50" rx="8" fill="#1a9c8f"/>
+        <text x="255" y="52" font-size="11" font-weight="900" fill="#fff" text-anchor="middle">Arma Kart [EE51KAR]</text>
+        <text x="255" y="67" font-size="9" fill="#e6fffb" text-anchor="middle">normal kumanda</text>
+        <line x1="334" y1="55" x2="356" y2="55" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
+
+        <rect x="360" y="30" width="140" height="50" rx="8" fill="#d6e3ee"/>
+        <text x="430" y="51" font-size="10.5" font-weight="700" fill="#1f2a37" text-anchor="middle">Hidrolik ünite</text>
+        <text x="430" y="66" font-size="9.5" fill="#1f2a37" text-anchor="middle">→ mantar bariyer ×3</text>
+
+        <rect x="540" y="30" width="160" height="50" rx="8" fill="#e8562a"/>
+        <text x="620" y="48" font-size="10.5" font-weight="900" fill="#fff" text-anchor="middle">Arma WOC · Arma Mobil</text>
+        <text x="620" y="61" font-size="9" fill="#fff" text-anchor="middle">+ ARM.v19™ yapay zekâ</text>
+        <text x="620" y="73" font-size="8.5" fill="#ffe8de" text-anchor="middle">internetten erişilebilir</text>
+
+        <!-- today note -->
+        <text x="255" y="94" font-size="8.5" font-weight="700" fill="#b3261e" text-anchor="middle">⚠ bugün loop girişi de bu kartta (V)</text>
+
+        <!-- digital intersection -->
+        <path d="M620 80 V112 H255 V141" fill="none" stroke="#e5a00d" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#arrA)"/>
+        <rect x="362" y="102" width="150" height="20" rx="10" fill="#e5a00d"/>
+        <text x="437" y="116" font-size="9.5" font-weight="900" fill="#1f2a37" text-anchor="middle">dijital kesişim noktası</text>
+
+        <!-- row 2 -->
+        <text x="0" y="133" font-size="9" font-weight="900" fill="#b3261e" letter-spacing="1.2">SAFETY YOLU · koruma · AYRI (hedef)</text>
+        <rect x="-6" y="139" width="512" height="62" rx="10" fill="none" stroke="#b3261e" stroke-width="1.4" stroke-dasharray="5 4"/>
+
+        <rect x="0" y="145" width="150" height="50" rx="8" fill="#eef2f5" stroke="#cbd5e1"/>
+        <text x="75" y="165" font-size="10.5" font-weight="700" fill="#1f2a37" text-anchor="middle">Loop dedektör + fotosel</text>
+        <text x="75" y="180" font-size="9.5" fill="#1f2a37" text-anchor="middle">+ acil stop butonları</text>
+        <line x1="154" y1="170" x2="176" y2="170" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
+
+        <rect x="180" y="145" width="150" height="50" rx="8" fill="#b3261e"/>
+        <text x="255" y="163" font-size="11.5" font-weight="900" fill="#fff" text-anchor="middle">Safety PLC</text>
+        <text x="255" y="176" font-size="9" fill="#fff" text-anchor="middle">emniyet kumandası</text>
+        <text x="255" y="188" font-size="8" fill="#fde2df" text-anchor="middle">(ayrı, sertifikalı röle/PLC)</text>
+        <line x1="334" y1="170" x2="356" y2="170" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
+
+        <rect x="360" y="145" width="140" height="50" rx="8" fill="#eef2f5" stroke="#cbd5e1"/>
+        <text x="430" y="165" font-size="10" font-weight="700" fill="#1f2a37" text-anchor="middle">Pompa kontaktörü ×2</text>
+        <text x="430" y="180" font-size="9.5" fill="#1f2a37" text-anchor="middle">+ valf enerjisi kesme</text>
+        <line x1="504" y1="170" x2="536" y2="170" stroke="#64748b" stroke-width="1.6" marker-end="url(#arr)"/>
+
+        <rect x="540" y="145" width="160" height="50" rx="8" fill="#1f2d4d"/>
+        <text x="620" y="166" font-size="11.5" font-weight="900" fill="#fff" text-anchor="middle">Safe State</text>
+        <text x="620" y="181" font-size="9.5" fill="#dbe4f0" text-anchor="middle">hareket yok · aşağıda</text>
+
+        <rect x="-6" y="208" width="318" height="19" rx="9.5" fill="#fbe9e7"/>
+        <text x="4" y="221" font-size="9" font-weight="900" fill="#b3261e">S3 · SRP/CS sınırı (ISO 13849-1): giriş + mantık + çıkış</text>
+      </svg>
+    </div>
+    <div class="callout"><b>Bugün</b><span class="v">V</span> Üretici, loop dedektörü tek kontrol paneli Arma Kart'ın "güvenlik özelliği" olarak listeliyor<span class="g">G</span>; ayrı bir emniyet kontrolcüsü tanımlanmamış. Bu yüzden varsayımımız: emniyet mantığı ile normal kumanda bugün <b>aynı kartta</b>. Şemadaki ayrı safety yolu <b>hedef mimaridir</b>.</div>
+
+    <h2 class="task">Görev — sırayla cevaplayın</h2>
+
+    <div class="q">
+      <div class="num">1</div>
+      <div>
+        <div class="qt">Bu makinede tehlike nedir? İnsan neyden zarar görür?</div>
+        <div class="ans">
+          <p>Tehlike, hidrolik kuvvetle yükselen 900 mm'lik çelik gövdedir; 7,5 t kamyonu 80 km/s'te durduracak kadar rijittir<span class="g">G</span>. Zarar yolları:</p>
+          <ul>
+            <li><b>Araç:</b> bariyer, yetkili tankerin hemen arkasından giren aracın (tailgating) ya da şeritte duran aracın altına vurur, aracı kaldırır; içindekiler yaralanır. Motosikletli/bisikletli fırlatılır.</li>
+            <li><b>Yaya:</b> tanker şoförü ya da güvenlik görevlisi bariyerin üstündeyken/yanındayken çarpma, düşme, ayağın gövde ile zemin zıvanası arasında sıkışması.</li>
+            <li><b>Bakım:</b> çukurda çalışırken beklenmedik hareket, yüksek basınçlı hidrolik yağ (enjeksiyon yaralanması), 380 V saha panosu.</li>
+          </ul>
+          <p><b>İkincil, güvenlik kaynaklı:</b> bariyer yanlış anda inerse düşmanca araç tank sahasına ulaşır → patlama ya da zehirli sızıntı.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="q">
+      <div class="num">2</div>
+      <div>
+        <div class="qt">Safety function (emniyet fonksiyonu) hangisidir?</div>
+        <div class="ans">
+          <p><b>SF-1 — Varlık algılanınca yükselme engeli (ana fonksiyon):</b> Bariyer bölgesinde (loop alanı + fotosel hattı) araç ya da kişi varken yükselme komutu, kaynağı ne olursa olsun (kart, plaka, kumanda, WOC, Mobil, YZ), uygulanmaz. Yükselme sırasında algılama olursa hareket durur ve bariyer geri iner.</p>
+          <p><b>Destekleyenler:</b> SF-2 acil durdurma (kulübe + saha panosu), SF-3 enerji dönüşünde/yeniden başlatmada kendiliğinden hareketin önlenmesi. <b>PL'siz önlemler:</b> harekete ≥3 sn kala kırmızı ışık + LED flaşör; kurtarma için kilitli küresel vana ile manuel indirme (benzer modellerde<span class="g">G</span>).</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer"><span>SAFETY 4.0 BOOTCAMP · Arma Mantar Bariyer Sürümü · Bu bir eğitim çıktısıdır, resmî denetim değildir.</span><span>1 / 3</span></div>
+</section>
+
+<!-- ============================ PAGE 2 ============================ -->
+<section class="page">
+  <div class="content" style="padding-top: 12mm;">
+
+    <div class="q">
+      <div class="num">3</div>
+      <div>
+        <div class="qt">Safety-related control system nerede? Şemada işaretleyin.</div>
+        <div class="ans">
+          <p>Şemada <b>kırmızı kesikli çerçeve</b> (SRP/CS): <b>giriş</b> = loop dedektör + fotosel + acil stop butonları; <b>mantık</b> = emniyet rölesi / Safety PLC; <b>çıkış</b> = pompa motorunun seri iki kontaktörü + yükseltme valfinin enerjisinin kesilmesi + indirme valfi. Hidrolik emniyet elemanları (çek valf, emniyet valfi) da sistemin parçasıdır.</p>
+          <p><b>Kritik bulgu:</b> üretici loop dedektörü Arma Kart'ın güvenlik özelliği olarak veriyor<span class="g">G</span>; ayrı bir emniyet kontrolcüsü yok. Varsayımımız<span class="v">V</span>: bugün emniyet mantığı ile normal kumanda <b>aynı kartta</b> — yani "ayrı safety yolu" şu an yalnızca hedef.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="q">
+      <div class="num">4</div>
+      <div>
+        <div class="qt">Normal PLC ile Safety PLC farkı nedir?</div>
+        <div class="ans">
+          <p><b>Normal kumanda</b> (Arma Kart ya da aksesuar PLC<span class="g">G</span>) işlevi ve sürekliliği hedefler: tek kanallıdır, kendi arızasını (takılı çıkış, donmuş giriş) yakalaması garanti değildir; programı ve parametreleri ağdan ya da uygulamadan değiştirilebilir.</p>
+          <p><b>Safety PLC / emniyet rölesi</b> iki kanallıdır (yedekli), kanallar birbirini izler, tanı kapsamı (DC) yüksektir; arıza algılarsa kendiliğinden güvenli duruma geçer. PL d/e – SIL 2/3 için sertifikalıdır; emniyet programı parola + imza/CRC ile korunur ve her değişiklik izlenir.</p>
+          <p>Bu tasarımda ilişki tek yönlüdür: SF-1 normal kumandaya "yükselmeye izin var" sinyali verir; normal kumanda SF-1'i asla devre dışı bırakamaz.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="q">
+      <div class="num">5</div>
+      <div>
+        <div class="qt">PLr / SIL neden var? Bu fonksiyon için neden önemli?</div>
+        <div class="ans">
+          <p>PLr/SIL, emniyet fonksiyonunun güvenilirliğini riske göre ölçekler: risk büyüdükçe tehlikeli arıza olasılığı düşmeli, mimari daha yedekli olmalıdır.</p>
+          <p><b>SF-1 için ISO 13849-1 risk grafiği:</b> S2 (ağır/geri dönüşsüz yaralanma: motosikletli, yaya, araç içi) · F2 (24/7 trafik; bariyer her araçtan sonra yükseliyor) · P2 (araç içindeki kişi kaçamaz, bariyer aracın altında görünmez) → <b>PLr = e</b> (Kat. 3 yüksek DC veya Kat. 4). SF-2 ve SF-3 → <b>PLr = d</b>.</p>
+          <p><b>Neden önemli:</b> insan ile 1.224 kJ'lük darbeye dayanacak hidrolik gövde<span class="g">G</span> arasında yalnızca SF-1 var. Tek bir arıza ya da yanlış ayar (takılı loop rölesi, düşük hassasiyet, firmware hatası) bariyeri bir insanın üstüne kaldırmamalı. Ayrıca loop yalnız metali görür, yayayı görmez: PL e için farklı prensipte ikinci bir sensör (fotosel ya da radar) şarttır.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="q">
+      <div class="num">6</div>
+      <div>
+        <div class="qt">Safe state (güvenli durum) nedir?</div>
+        <div class="ans">
+          <p><b>SF-1'in güvenli durumu:</b> bariyer hareketsiz ve yükselme yasak; yükselirken algılama olduysa bariyer aşağıda. <b>Acil stopta:</b> pompa enerjisiz, valfler kapalı, bariyer olduğu yerde (çek valf); sıkışma varsa kilitli küresel vana ile indirilir.</p>
+          <p><b>İkilem:</b> tesis güvenliği (security) için güvenli durum "yukarıda ve kilitli", insan emniyeti (safety) için "aşağıda ve hareketsiz". <b>Kararımız:</b> insan önce gelir; SF-1 tetiklendiğinde açılan güvenlik boşluğu başka bir katmanla kapatılır (görevli, ikinci bariyer hattı, kamera). Enerji kesilince bariyer konumunu korur; enerji gelince kendiliğinden hareket etmez (SF-3).</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="q">
+      <div class="num">7</div>
+      <div>
+        <div class="qt">Safety function hangi dijital bağımlılıklara sahip?</div>
+        <div class="ans">
+          <ul>
+            <li><b>Loop dedektör ayarı:</b> hassasiyet ve frekans; motosikleti görüp görmemesi buna bağlı.</li>
+            <li><b>Fotosel durumu:</b> etkin mi, yazılımdan bypass mı? Yanlış alarm yüzünden kapatılması sahada sık görülür<span class="v">V</span>.</li>
+            <li><b>Arma Kart [EE51KAR] firmware'i ve parametreleri:</b> yükselme gecikmesi, "araç geçti" mantığı, hangi girişin emniyet girişi sayıldığı, enerji dönüşündeki davranış.</li>
+            <li><b>Komut kaynakları:</b> Arma WOC (kulübe PC'si), Arma Mobil ("nerede olursanız olun"<span class="g">G</span>), kart okuyucu/plaka tanıma entegrasyonu, RF kumanda, ARM.v19™ YZ.</li>
+            <li><b>Değişiklik kanalı ve kayıt:</b> firmware/parametre yükleme yolu (servis bilgisayarı, USB, uzaktan<span class="v">V</span>) ve olay sonrası kanıt için zaman damgalı kayıtlar.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="q">
+      <div class="num">8</div>
+      <div>
+        <div class="qt">Siber müdahale hangi noktadan bu fonksiyonu bozar?</div>
+        <div class="ans">
+          <p><b>En kritik nokta dijital kesişimdir:</b> yükseltme komutu ile varlık kilidinin buluştuğu Arma Kart<span class="v">V</span>. Kart WOC/Mobil üzerinden yapılandırılabiliyorsa, tek bir müdahale hem "yüksel" komutunu gönderir hem de kilidi etkisizleştirir (loop girişini yok saydırma, fotosel bypass, gecikmeyi 0 sn yapma).</p>
+          <p><b>Diğer kapılar:</b> (1) ele geçirilen Arma Mobil hesabından tailgating anına denk getirilen "yüksel" komutu; (2) kulübe PC'sindeki WOC'a zararlı yazılım ya da uzak masaüstü; (3) erişim kontrol/plaka hattına sahte "araç geçti" sinyali; (4) sabit kodlu RF kumandaya tekrar (replay) saldırısı<span class="v">V</span>; (5) YZ'ye sahte plaka ya da manipüle görüntü.</p>
+          <p><b>Ters yön:</b> loop'a bırakılan metal plaka SF-1'i tetikleyip bariyeri aşağıda tutar; emniyet fonksiyonu güvenliğe karşı silaha dönüşür.</p>
+          <p><b>Gereksinim (LAB 4'e köprü):</b> SF-1 ağdan yapılandırılamayan, ayrı ve emniyet onaylı bir yolda olmalı; pompa/valf enerjisini doğrudan kesmelidir. AB Makine Yönetmeliği 2023/1230 (20.01.2027'den itibaren), Ek III 1.1.9 "bozulmaya karşı koruma" ve 1.2.1 ile bunu zorunlu kılıyor.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer"><span>SAFETY 4.0 BOOTCAMP · Arma Mantar Bariyer Sürümü · Bu bir eğitim çıktısıdır, resmî denetim değildir.</span><span>2 / 3</span></div>
+</section>
+
+<!-- ============================ PAGE 3 ============================ -->
+<section class="page">
+  <div class="content" style="padding-top: 12mm;">
+    <h2 class="task" style="margin-top:0;">Çıktı — Safety Function Map</h2>
+
+    <table>
+      <thead>
+        <tr>
+          <th style="width:15%">ID · Fonksiyon</th>
+          <th style="width:31%">Giriş → Mantık → Çıkış</th>
+          <th style="width:12%">Güvenli durum</th>
+          <th style="width:10%">PLr · tepki</th>
+          <th style="width:17%">Dijital bağımlılık</th>
+          <th style="width:15%">Doğrulama</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="id">SF-1</span>Varlık algılanınca yükselme engeli + geri çekme</td>
+          <td>Loop (araç) + fotosel (kişi), iki farklı prensip → Safety PLC; tüm yükseltme komutları bu izinle VE'lenir → seri 2 pompa kontaktörü + yükseltme valfi enerjisiz, indirme valfi açık</td>
+          <td>Hareket yok; algılama sürerken aşağıda</td>
+          <td><span class="plr">PLr e</span><br>≤ 0,5 s<span class="v">V</span><br><span style="color:#64748b;">≈ 75 mm ek yükselme</span></td>
+          <td>Loop hassasiyeti, fotosel bypass, Arma Kart parametre/firmware, WOC/Mobil/YZ komutları</td>
+          <td>Haftalık test aracı + fotosel kesme; her değişiklikte yeniden doğrulama</td>
+        </tr>
+        <tr>
+          <td><span class="id">SF-2</span>Acil durdurma</td>
+          <td>Kulübe + saha panosu acil stop → emniyet rölesi (kablolu) → pompa enerjisi kesilir (Stop kat. 0), valfler enerjisiz</td>
+          <td>Hareket durur, konum korunur</td>
+          <td><span class="plr">PLr d</span><br>≤ 0,2 s<span class="v">V</span></td>
+          <td>Yok (kablolu); reset yalnız yerinde</td>
+          <td>Aylık buton testi</td>
+        </tr>
+        <tr>
+          <td><span class="id">SF-3</span>Beklenmedik yeniden hareketin önlenmesi</td>
+          <td>Enerji dönüşü / kontrolcü reset → yerinde reset + varlık kontrolü olmadan izin yok → çıkışlar enerjisiz kalır</td>
+          <td>Hareket yok</td>
+          <td><span class="plr">PLr d</span></td>
+          <td>Arma Kart'ın açılış davranışı parametresi</td>
+          <td>6 ayda bir güç kes-ver testi</td>
+        </tr>
+        <tr class="sub">
+          <td><b>Destekleyici</b> (PL'siz) · Hareket öncesi uyarı</td>
+          <td>Komut → yükselmeden ≥ 3 sn önce kırmızı ışık + LED flaşör + sesli ikaz</td>
+          <td>—</td>
+          <td>—</td>
+          <td>Trafik ışığı çıkışı</td>
+          <td>Günlük görsel kontrol</td>
+        </tr>
+        <tr class="sub">
+          <td><b>Tamamlayıcı</b> · Kurtarma için manuel indirme</td>
+          <td>Kilitli küresel vana ile bariyer indirilir; benzer modellerde mevcut<span class="g">G</span></td>
+          <td>Bariyer aşağıda</td>
+          <td>—</td>
+          <td>Yok</td>
+          <td>Vana kilidi ve mühür kontrolü</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="two">
+      <div class="box">
+        <h3>SF-1 için PLr belirleme (ISO 13849-1)</h3>
+        <table>
+          <thead><tr><th style="width:22%">Parametre</th><th style="width:12%">Seçim</th><th>Gerekçe</th></tr></thead>
+          <tbody>
+            <tr><td>S · şiddet</td><td><b>S2</b></td><td>Yaya/motosikletli için ağır, geri dönüşsüz</td></tr>
+            <tr><td>F · sıklık</td><td><b>F2</b></td><td>24/7 trafik; her araçtan sonra yükselme</td></tr>
+            <tr><td>P · kaçınma</td><td><b>P2</b></td><td>Araç içindeki kişi kaçamaz</td></tr>
+            <tr><td colspan="2"><b>Sonuç</b></td><td><span class="plr">PLr = e</span> → Kat. 3 (yüksek DC) / Kat. 4</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="box">
+        <h3>SF-1 izin mantığı (yazılım gözüyle)</h3>
+<div class="logic"><span class="k">YÜKSELT</span> = komut_geçerli
+        ∧ ¬loop_dolu
+        ∧ ¬fotosel_kesik
+        ∧ ¬acil_stop
+        ∧ reset_yerinde
+        ∧ (kanal_A == kanal_B)  <span class="c">// iki kanal tutarlı</span></div>
+        <p>Bu ifade <b>emniyet mantığında</b> (Safety PLC) hesaplanır. Arma Kart, WOC, Mobil ya da YZ yalnızca <b>komut_geçerli</b> terimini üretebilir; diğer terimlere yazamaz. Kanallar tutarsızsa sonuç "hareket yok" olur (fail-safe).</p>
+      </div>
+    </div>
+
+    <div class="two">
+      <div class="box">
+        <h3>Üreticiye sorulacak doğrulama soruları</h3>
+        <p style="color:#475569;">Cevaplar geldikçe <span class="v">V</span> etiketleri <span class="g">G</span>'ye döner:</p>
+        <ol>
+          <li>Arma Kart [EE51KAR] emniyet onaylı mı (PL/SIL sertifikası)?</li>
+          <li>Loop/fotosel girişleri firmware'de mi, ayrı bir rölede mi işleniyor?</li>
+          <li>WOC/Mobil hangi parametreleri değiştirebiliyor (hassasiyet, gecikme, bypass)?</li>
+          <li>Enerji dönüşünde ya da yeniden başlatmada bariyer kendiliğinden hareket ediyor mu?</li>
+          <li>Firmware güncellemesi imzalı mı, değişiklik kaydı tutuluyor mu?</li>
+          <li>Manuel indirme vanası kilitli ve izleniyor mu?</li>
+        </ol>
+      </div>
+      <div class="box">
+        <h3>Gerçek mi, varsayım mı?</h3>
+        <p><span class="g">G</span> <b>Gerçek:</b> üreticinin sitesinde yazan bilgi.</p>
+        <p><span class="v">V</span> <b>Varsayım:</b> eğitim senaryosu için kurgulandı (tesis, ağ, ayarlar, zafiyetler); <b>Arma ürünü hakkında iddia değildir.</b></p>
+        <p style="margin-top:1.6mm;"><b>Kaynaklar</b></p>
+        <ol style="font-size:7.4pt;">
+          <li>armakontrol.com/mantar-bariyer-900-mm-80km</li>
+          <li>armakontrol.com/arma-c-serisi-hidrolik-mantar-bariyer</li>
+          <li>armakontrol.com/bariyer-sistemlerinde-mobil-donusum-mobil-kontrol</li>
+          <li>armakontrol.com/yapay-zeka</li>
+          <li>ISO 13849-1:2023 · AB Makine Yönetmeliği 2023/1230</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="evidence">
+      <svg width="16" height="18" viewBox="0 0 16 18" fill="none" stroke="#13786e" stroke-width="1.6"><path d="M2 1.5h7.5L14 6v10.5H2z"/><path d="M9.5 1.5V6H14"/></svg>
+      <span>Bu föyün çıktısı <span class="hl">Safety Function Map</span> → Evidence Pack <span class="hl">EP 03 Safety Functions</span> başlığına oturur.</span>
+    </div>
+  </div>
+
+  <div class="footer"><span>SAFETY 4.0 BOOTCAMP · Arma Mantar Bariyer Sürümü · Bu bir eğitim çıktısıdır, resmî denetim değildir.</span><span>3 / 3</span></div>
+</section>
+
+</body>
+</html>
