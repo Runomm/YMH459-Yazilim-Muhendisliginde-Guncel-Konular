@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<title>LAB 6 · CRA Incident Simulation · Arma Mantar Bariyer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&family=Literata:opsz,wght@7..72,600;7..72,700&display=swap" rel="stylesheet">
+<style>
+  @page { size: A4; margin: 0; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: #fff; }
+  body {
+    font-family: 'Lato', 'Segoe UI', Arial, sans-serif;
+    color: #1f2a37; font-size: 9.3pt; line-height: 1.4;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  }
+  .page { width: 210mm; height: 297mm; position: relative; overflow: hidden; break-after: page; }
+  .page:last-child { break-after: auto; }
+
+  .band { height: 33mm; position: relative; overflow: hidden; color: #fff;
+          background: linear-gradient(100deg, #172238 0%, #3a2534 48%, #8f3b3b 100%); }
+  .band::after { content: ''; position: absolute; right: -16mm; top: -26mm; width: 72mm; height: 72mm;
+                 border-radius: 50%; background: rgba(255,255,255,0.10); }
+  .band .icon { position: absolute; left: 14mm; top: 9mm; width: 14mm; height: 14mm; border-radius: 50%;
+                border: 1.2px solid rgba(255,255,255,.55); background: rgba(255,255,255,.08);
+                display: flex; align-items: center; justify-content: center; }
+  .band .kicker { position: absolute; left: 32mm; top: 9.5mm; font-size: 7.2pt; letter-spacing: .26em;
+                  font-weight: 700; text-transform: uppercase; opacity: .92; }
+  .band h1 { position: absolute; left: 32mm; top: 13.5mm; margin: 0; font-family: 'Literata', Georgia, serif;
+             font-weight: 700; font-size: 21pt; letter-spacing: -.01em; }
+  .band .pill { position: absolute; right: 14mm; top: 15mm; border: 1px solid rgba(255,255,255,.65);
+                border-radius: 999px; padding: 1.8mm 4.2mm; font-size: 8pt; font-weight: 700;
+                background: rgba(255,255,255,.08); z-index: 2; }
+
+  .content { padding: 5.5mm 14mm 0 14mm; }
+  .meta { display: grid; grid-template-columns: 1.7fr 1.2fr 1fr; gap: 9mm; font-size: 8pt;
+          color: #64748b; font-weight: 700; }
+  .meta div { border-bottom: 1px solid #cbd5e1; padding-bottom: 1.4mm; }
+  .meta span { font-weight: 400; color: #111827; margin-left: 2.5mm; font-size: 8.6pt; }
+
+  .scenario { margin-top: 4.5mm; background: #fcebe8; border-radius: 2.5mm; padding: 3mm 4.5mm 3mm 7.5mm; position: relative; font-size: 8.9pt; }
+  .scenario::before { content: ''; position: absolute; left: 3mm; top: 3mm; bottom: 3mm; width: 1.3mm; border-radius: 1mm; background: #b3261e; }
+  .context { margin-top: 2.5mm; background: #edf2f5; border-radius: 2.5mm; padding: 3mm 4.5mm 3mm 7.5mm;
+             position: relative; font-size: 8.9pt; }
+  .context::before { content: ''; position: absolute; left: 3mm; top: 3mm; bottom: 3mm; width: 1.3mm;
+                     border-radius: 1mm; background: #1f2d4d; }
+  .context .hl { color: #13786e; font-weight: 700; }
+  .context b.t { color: #13786e; }
+
+  h2.task { font-family: 'Literata', Georgia, serif; font-weight: 700; font-size: 12.5pt; margin: 4.5mm 0 2.5mm 0;
+            display: flex; align-items: center; gap: 3mm; color: #1f2a37; }
+  h2.task::after { content: ''; flex: 1; height: 1px; background: #d5dee7; }
+
+  .tl svg { width: 100%; height: auto; display: block; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 7.9pt; }
+  th { background: #1f2d4d; color: #fff; text-align: left; font-weight: 700; padding: 1.8mm 2mm; font-size: 7.8pt; }
+  td { border: 1px solid #d9e2ea; padding: 1.5mm 2mm; vertical-align: top; color: #1f2a37; }
+  td.k { font-weight: 900; white-space: nowrap; background: #f6f8fa; }
+
+  .q { display: grid; grid-template-columns: 8mm 1fr; column-gap: 3mm; margin-bottom: 3mm; }
+  .num { width: 7mm; height: 7mm; border-radius: 50%; background: #b3261e; color: #fff;
+         font-family: 'Literata', Georgia, serif; font-weight: 700; font-size: 9.5pt;
+         display: flex; align-items: center; justify-content: center; margin-top: .3mm; }
+  .qt { font-weight: 700; color: #1f2a37; font-size: 9.4pt; margin-bottom: 1mm; }
+  .ans { color: #12324a; border-left: 2px solid #efc3bd; padding-left: 3mm; font-size: 8.9pt; }
+  .ans p { margin: 0 0 1.2mm 0; }
+  .ans ol, .ans ul { margin: .4mm 0 1mm 0; padding-left: 4.5mm; }
+  .ans li { margin-bottom: .6mm; }
+  .ans b { color: #0f2a40; }
+
+  .duo { display: grid; grid-template-columns: 1fr 1.25fr; gap: 4mm; margin: 1mm 0 1mm 0; }
+  .duo > div { border: 1px solid #d9e2ea; border-radius: 2.2mm; padding: 2.2mm 2.8mm; font-size: 8.4pt; background: #fbfcfd; }
+  .duo .h { font-weight: 900; font-size: 8.6pt; margin-bottom: 1mm; color: #1f2a37; }
+  .duo ol, .duo ul { margin: 0; padding-left: 4.4mm; }
+  .duo li { margin-bottom: .7mm; }
+
+  .warn { margin-top: 3mm; background: #fcebe8; border-left: 3px solid #b3261e; border-radius: 2mm; padding: 2.6mm 3.6mm; font-size: 8.6pt; }
+  .warn b.t { color: #7f1d1d; }
+  .who { margin-top: 3mm; border: 1px solid #d9e2ea; border-radius: 2.5mm; padding: 2.6mm 3.4mm; font-size: 8.2pt; background: #fbfcfd; }
+  .who h3 { margin: 0 0 1.4mm 0; font-family: 'Literata', Georgia, serif; font-size: 10pt; }
+  .who ul { margin: 0; padding-left: 4.5mm; }
+  .who li { margin-bottom: .8mm; }
+
+  .g, .v { display: inline-block; font-size: 6.6pt; font-weight: 900; line-height: 1; padding: .55mm 1.1mm;
+           border-radius: 1mm; vertical-align: 1px; margin-left: .6mm; }
+  .g { background: #e2f3ef; color: #0f766e; border: 1px solid #9fd3c7; }
+  .v { background: #fff3dd; color: #92560a; border: 1px solid #efc983; }
+
+  .box { border: 1px solid #d9e2ea; border-radius: 2.5mm; padding: 2.4mm 3.2mm; font-size: 7.8pt; margin-top: 3mm; color: #475569; }
+  .evidence { margin-top: 3.5mm; border: 1px dashed #b8c6d3; border-radius: 2.5mm; padding: 2.6mm 4mm;
+              font-size: 8.4pt; display: flex; align-items: center; gap: 3mm; background: #f7f9fb; }
+  .evidence .hl { color: #14706a; font-weight: 700; }
+
+  .footer { position: absolute; left: 14mm; right: 14mm; bottom: 8mm; border-top: 1px solid #d9e2ea;
+            padding-top: 2mm; font-size: 7.2pt; color: #64748b; display: flex; justify-content: space-between; }
+</style>
+</head>
+<body>
+
+<!-- ============================ PAGE 1 ============================ -->
+<section class="page">
+  <div class="band">
+    <div class="icon">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"><path d="M2.5 12.5h4l2.5-6 4 12 2.5-6h6"/></svg>
+    </div>
+    <div class="kicker">Laboratuvar 6 · Arma Mantar Bariyer · Kimya Tesisi Girişi</div>
+    <h1>CRA Incident Simulation</h1>
+    <div class="pill">Çıktı: Incident Workflow</div>
+  </div>
+
+  <div class="content">
+    <div class="meta">
+      <div>Ad Soyad<span>Mehmet Onur Boyraz · 245541023</span></div>
+      <div>Grup<span></span></div>
+      <div>Tarih<span>20.10.2026</span></div>
+    </div>
+
+    <div class="scenario"><b>Senaryo<span class="v">V</span>:</b> Saat <b>10:15</b>. Sabah raporunda, Arma Mobil'deki paylaşılan vardiya amiri hesabına <b>gece 03:00'te tanınmayan bir konumdan</b> girildiği görülüyor. Aynı saatlerde Arma Kart'ın yapılandırma arayüzünde (HTTP/80) erişim izi var. Loop hassasiyeti, fotosel bypass ve yükselme gecikmesi değişmiş olabilir; <b>SF-1 parametreleri henüz doğrulanmadı</b>. Bariyerler çalışıyor, tanker trafiği yoğun. Güvenlik vardiya amiri sizsiniz.</div>
+
+    <div class="context"><b class="t">Kavram:</b> Bir olayda en değerli iki şey <span class="hl">zaman</span> ve <span class="hl">kanıt</span>tır. CRA'nın 24 saat / 72 saat / 14 gün yükümlülükleri, iyi bir müdahale akışının doğal kilometre taşlarıdır; ezber değil.</div>
+
+    <h2 class="task">Çıktı — Incident Workflow (zaman çizgisi)</h2>
+    <div class="tl">
+      <svg viewBox="0 0 740 200" xmlns="http://www.w3.org/2000/svg" font-family="Lato, 'Segoe UI', Arial, sans-serif">
+        <line x1="22" y1="34" x2="718" y2="34" stroke="#cbd5e1" stroke-width="3"/>
+        <g font-size="9.5" font-weight="900" text-anchor="middle" fill="#1f2a37">
+          <text x="54" y="17" fill="#64748b">03:00</text><text x="158" y="17" fill="#b3261e">10:15</text><text x="262" y="17" fill="#c2410c">10:30</text>
+          <text x="366" y="17" fill="#c2410c">12:15</text><text x="476" y="17">+24 saat</text><text x="586" y="17">+72 saat</text><text x="690" y="17">+14 gün</text>
+        </g>
+        <circle cx="54" cy="34" r="7" fill="#94a3b8"/><circle cx="158" cy="34" r="8" fill="#b3261e"/>
+        <circle cx="262" cy="34" r="7" fill="#e8562a"/><circle cx="366" cy="34" r="7" fill="#e8562a"/>
+        <circle cx="476" cy="34" r="7" fill="#1f2d4d"/><circle cx="586" cy="34" r="7" fill="#1f2d4d"/><circle cx="690" cy="34" r="7" fill="#1f2d4d"/>
+        <g font-size="8.4" font-weight="900" text-anchor="middle">
+          <text x="54" y="56" fill="#64748b">yetkisiz giriş</text><text x="158" y="56" fill="#b3261e">tespit</text>
+          <text x="262" y="56" fill="#c2410c">ilk 15 dakika</text><text x="366" y="56" fill="#c2410c">ilk 2 saat</text>
+          <text x="476" y="56" fill="#1f2d4d">erken uyarı</text><text x="586" y="56" fill="#1f2d4d">bildirim</text><text x="690" y="56" fill="#1f2d4d">son rapor</text>
+        </g>
+        <!-- cards -->
+        <rect x="5" y="64" width="98" height="130" rx="6" fill="#f1f5f9" stroke="#cbd5e1" stroke-dasharray="4 3"/>
+        <rect x="109" y="64" width="98" height="130" rx="6" fill="#fcebe8" stroke="#e8b4ad"/>
+        <rect x="213" y="64" width="98" height="130" rx="6" fill="#fff1ea" stroke="#f3c3ad"/>
+        <rect x="317" y="64" width="98" height="130" rx="6" fill="#fff1ea" stroke="#f3c3ad"/>
+        <rect x="427" y="64" width="98" height="130" rx="6" fill="#eef2f8" stroke="#c5cfdc"/>
+        <rect x="537" y="64" width="98" height="130" rx="6" fill="#eef2f8" stroke="#c5cfdc"/>
+        <rect x="641" y="64" width="98" height="130" rx="6" fill="#eef2f8" stroke="#c5cfdc"/>
+        <g font-size="8" fill="#1f2a37">
+          <text x="12" y="80">Paylaşılan Arma</text><text x="12" y="93">Mobil hesabıyla</text><text x="12" y="106">giriş, tanınmayan</text><text x="12" y="119">konum</text><text x="12" y="137">Arma Kart HTTP/80</text><text x="12" y="150">sayfasına erişim</text><text x="12" y="170" fill="#92560a" font-weight="900">fark edilmedi</text>
+          <text x="116" y="80">Sabah raporunda</text><text x="116" y="93">şüpheli oturum</text><text x="116" y="106">görüldü</text><text x="116" y="124" font-weight="900">Olay ilan edilir;</text><text x="116" y="137">zaman damgalı</text><text x="116" y="150">olay defteri açılır</text>
+          <text x="220" y="80" font-weight="900">1 · Hareketi durdur,</text><text x="220" y="93">şeridi boşalt</text><text x="220" y="111" font-weight="900">2 · 4G'yi kes —</text><text x="220" y="124">kapatmadan</text><text x="220" y="142" font-weight="900">3 · Kanıtı dondur:</text><text x="220" y="155">reset yok</text>
+          <text x="324" y="80">SF-1 parametreleri</text><text x="324" y="93">+ CRC + test</text><text x="324" y="111">Kanıt imajları</text><text x="324" y="124">ve loglar</text><text x="324" y="142">Paylaşılan hesap</text><text x="324" y="155">kapalı</text><text x="324" y="173" font-weight="900">Manuel mod</text>
+          <text x="434" y="80">Arma'ya kanıtla</text><text x="434" y="93">bildir (CRA erken</text><text x="434" y="106">uyarısı onun)</text><text x="434" y="124">USOM / sektörel</text><text x="434" y="137">SOME</text><text x="434" y="155">KVKK ön</text><text x="434" y="168">değerlendirmesi</text>
+          <text x="544" y="80">Kök neden, etki,</text><text x="544" y="93">önlem</text><text x="544" y="111">Rol tablosu</text><text x="544" y="129">Gerekirse KVKK</text><text x="544" y="142">bildirimi (≤ 72 s)</text>
+          <text x="648" y="80">Son rapor</text><text x="648" y="98">Kayıtlar arşivde,</text><text x="648" y="111">hash'li</text><text x="648" y="129">LAB 4 mimarisi</text><text x="648" y="142">takvime bağlı</text>
+        </g>
+      </svg>
+    </div>
+
+    <h2 class="task">Görev — zaman çizgisini doldurun</h2>
+    <div class="q">
+      <div class="num">1</div>
+      <div>
+        <div class="qt">10:15 — ilk 15 dk: Kimi ararsınız? İlk üç eyleminiz?</div>
+        <div class="ans">
+          <div class="duo">
+            <div><div class="h">Kimi ararım?</div>
+              <ul>
+                <li><b>OT güvenlik sorumlusu</b> — olay yöneticisi olur</li>
+                <li><b>Tesis güvenlik müdürü</b> — kapı ve görevliler</li>
+                <li><b>İSG uzmanı</b> — SF-1 doğrulaması</li>
+                <li><b>Entegratör / Arma servisi</b> — yerinde destek, uzaktan değil</li>
+              </ul>
+            </div>
+            <div><div class="h">İlk üç eylem (sırası önemli)</div>
+              <ol>
+                <li><b>Emniyet:</b> otomatik ve uzaktan komutlar kesilir; bariyerler yukarıda kalır, yayalar şeritten çekilir, tankerler bekleme alanına alınır.</li>
+                <li><b>Kontrol altına al:</b> 4G'nin anteni/SIM'i çıkarılır, kulübe PC'si ağdan ayrılır — <b>kapatılmadan</b>, çünkü bellekteki iz kaybolur.</li>
+                <li><b>Kanıt:</b> "reset yok" kuralı ilan edilir; ekranlar fotoğraflanır, saatler not edilir, olay defteri başlar.</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer"><span>SAFETY 4.0 BOOTCAMP · Arma Mantar Bariyer Sürümü · Bu bir eğitim çıktısıdır, resmî denetim değildir.</span><span>1 / 3</span></div>
+</section>
+
+<!-- ============================ PAGE 2 ============================ -->
+<section class="page">
+  <div class="content" style="padding-top: 11mm;">
+    <div class="q">
+      <div class="num">2</div>
+      <div>
+        <div class="qt">İlk 2 saat: Emniyet güvende mi — nasıl doğrularsınız? Hangi kanıt korunur? Hangi hesap kapatılır?</div>
+      </div>
+    </div>
+    <table>
+      <tbody>
+        <tr><td class="k">Emniyet güvende mi?</td><td><b>Doğrulanana kadar "hayır" kabul edilir.</b> Önce kanıt alınır, sonra test edilir (sıra önemli: test, kartın durumunu değiştirebilir). (1) SF-1 parametreleri (loop hassasiyeti, fotosel durumu, yükselme gecikmesi, enerji dönüşü davranışı) okunur ve LAB 1'deki referans değerlerle, CRC'yle karşılaştırılır. (2) Fonksiyon testleri: test aracı loop'ta → yükselme yok; fotosel kesilince → durup iner; yaya maketi; acil stop. (3) Pano ve manuel indirme vanası mühürleri kontrol edilir. <b>Testler geçene kadar</b> bariyer yalnız manuel modda, görevlinin gözü önünde ve butona basılı tutarak yükseltilir.</td></tr>
+        <tr><td class="k">Hangi kanıt korunur?</td><td>Arma bulutundan oturum ve komut logları (resmi yazıyla talep) · Arma Kart'ın olay günlüğü ve o anki parametre dökümü, <b>değiştirilmeden</b> · 4G router'ın bağlantı ve port yönlendirme kayıtları · kulübe PC'sinin adli imajı (WOC, TeamViewer, USB geçmişi) · 02:30–10:30 arası kamera kayıtları · plaka/kart geçiş kayıtları · vardiya defteri. Her parçanın hash'i alınır, delil zinciri formu doldurulur.</td></tr>
+        <tr><td class="k">Hangi hesap kapatılır?</td><td>Paylaşılan Arma Mobil vardiya amiri hesabı <b>hemen</b>; amirlere geçici kişisel hesap + MFA verilir. Kanıt alındıktan sonra: Arma Kart'ın varsayılan yönetici parolası, 4G router yönetici parolası değişir; TeamViewer erişimi kapatılır; buluttaki açık oturumlar ve tokenlar iptal edilir.</td></tr>
+      </tbody>
+    </table>
+
+    <div class="q" style="margin-top:4mm;">
+      <div class="num">3</div>
+      <div>
+        <div class="qt">24 saat — CRA erken uyarı: Hangi bilgi hazır olmalı?</div>
+        <div class="ans">
+          <p><b>Önce kimin bildirdiğini ayıralım:</b> CRA'nın 24 saatlik erken uyarısı <b>üreticinin</b> yani Arma'nın yükümlülüğü (aktif istismar edilen bir açık ya da ürünün güvenliğini etkileyen ağır bir olay varsa). Tesis olarak bizim işimiz, Arma'nın bu süreyi tutturabilmesi için onu saatler içinde kanıtla bilgilendirmek. Gerekirse ulusal CSIRT'e (USOM / sektörel SOME) de bildiririz; CRA Madde 15 bu gönüllü bildirimi de mümkün kılar. Hazır olması gerekenler:</p>
+          <ul>
+            <li><b>Ne oldu:</b> paylaşılan hesapla yetkisiz giriş (03:00), Arma Kart yapılandırma sayfasına erişim; zaman çizgisi.</li>
+            <li><b>Ürün ve sürüm:</b> Arma Kart [EE51KAR] firmware sürümü, Arma Mobil ve bulut bileşeni.</li>
+            <li><b>Kötü niyet şüphesi:</b> evet — tanınmayan konum ve gece saati. Erken uyarı bunu açıkça sorar.</li>
+            <li><b>İlk etki:</b> SF-1 parametreleri değişti mi (test sonucu), kapı manuel modda, yaralanma yok.</li>
+            <li><b>Alınan önlemler:</b> izolasyon, hesap kapatma, manuel mod; iletişim kişisi.</li>
+            <li><b>Kişisel veri:</b> plaka ve giriş kayıtları görüntülendiyse KVKK ön değerlendirmesi başlar.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="q" style="margin-top:4mm;">
+      <div class="num">4</div>
+      <div>
+        <div class="qt">72 saat — CRA bildirim: Kök neden, etki, önlem — kim ne yapıyor?</div>
+        <div class="ans">
+          <p><b>Kök neden (ön bulgu):</b> hiç değişmemiş paylaşılan Arma Mobil parolası + MFA yok + Arma Kart'ta varsayılan parola + 4G port yönlendirme. LAB 3'teki S1 ve R4 zincirlerinin gerçekleşmiş hali. <b>Etki:</b> hangi SF-1 parametresinin neye değiştiği; kaç saat manuel mod ve tanker gecikmesi; yaralanma yok; kişisel veri görüntülenip görüntülenmediği. <b>Önlem:</b> LAB 4 hedef mimarisinin ilk adımları öne çekilir (kişisel hesap + MFA, port yönlendirmenin kaldırılması, fotosel bypass'ın kaldırılması) ve LAB 5'teki geçici bağımsız emniyet rölesi takılır.</p>
+        </div>
+      </div>
+    </div>
+    <table>
+      <thead><tr><th style="width:27%">Rol</th><th>72 saat içinde ne yapıyor?</th></tr></thead>
+      <tbody>
+        <tr><td class="k">Olay yöneticisi (OT güvenlik)</td><td>Zaman çizelgesi ve karar kaydı; bildirim taslakları; düzeltme planı ve takvimi</td></tr>
+        <tr><td class="k">Güvenlik müdürü</td><td>Manuel mod ve görevli prosedürü; kamera ve mühür kontrolleri; kapıda fiziksel müdahale izi</td></tr>
+        <tr><td class="k">İSG uzmanı</td><td>SF-1 doğrulaması ve test raporu; şerit güvenliği; çalışanların bilgilendirilmesi</td></tr>
+        <tr><td class="k">Entegratör + Arma</td><td>Log ve firmware analizi, kök neden. Arma: CRA 72 saatlik bildirimi ve düzeltme; etkilenen diğer kullanıcıları uyarma</td></tr>
+        <tr><td class="k">IT</td><td>Hesap yönetimi; kulübe PC imajı; bulut loglarının resmi talebi</td></tr>
+        <tr><td class="k">Hukuk / KVKK sorumlusu</td><td>Kişisel veri değerlendirmesi; gerekirse KVKK bildirimi (en geç 72 saat); resmi yazışmalar</td></tr>
+        <tr><td class="k">Üst yönetim</td><td>Kaynak onayı; dış iletişim kararı</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="footer"><span>SAFETY 4.0 BOOTCAMP · Arma Mantar Bariyer Sürümü · Bu bir eğitim çıktısıdır, resmî denetim değildir.</span><span>2 / 3</span></div>
+</section>
+
+<!-- ============================ PAGE 3 ============================ -->
+<section class="page">
+  <div class="content" style="padding-top: 11mm;">
+
+
+    <div class="q">
+      <div class="num">5</div>
+      <div>
+        <div class="qt">14 gün — son rapor: Hangi loglar/kayıtlar korunmuş olmalı?</div>
+      </div>
+    </div>
+    <table>
+      <thead><tr><th style="width:24%">Kayıt</th><th style="width:15%">Kaynak</th><th style="width:31%">Neden önemli?</th><th>Nasıl korunur?</th></tr></thead>
+      <tbody>
+        <tr><td>Oturum ve komut logları</td><td>Arma bulutu</td><td>03:00 girişinin kimden ve nereden geldiği</td><td>Resmi yazıyla talep; imzalı/hash'li dışa aktarım</td></tr>
+        <tr><td>Parametre dökümü + değişiklik geçmişi</td><td>Arma Kart</td><td>SF-1'in neyinin değiştiği</td><td>Olay anındaki döküm + CRC, değiştirilmeden</td></tr>
+        <tr><td>Bağlantı ve port yönlendirme kayıtları</td><td>4G router</td><td>Saldırının ağ yolu</td><td>Yapılandırma + log dışa aktarımı, hash</td></tr>
+        <tr><td>Adli imaj, olay günlükleri, WOC/TeamViewer/USB geçmişi</td><td>Kulübe PC</td><td>İkinci bir kapı kullanıldı mı?</td><td>İmaj + hash; orijinal disk mühürlü</td></tr>
+        <tr><td>Video kayıtları</td><td>NVR</td><td>Kapıda fiziksel müdahale var mı?</td><td>Olay günü + önceki 24 saat; kopya + hash</td></tr>
+        <tr><td>Plaka / kart geçiş kayıtları</td><td>Geçiş kontrol</td><td>Şüpheli araç geçişi var mı?</td><td>Dışa aktarım + hash</td></tr>
+        <tr><td>Vardiya defteri, karar kaydı, iletişim</td><td>Ekip</td><td>Kim neyi ne zaman bildi, neye karar verdi</td><td>İmzalı, zaman damgalı</td></tr>
+        <tr><td>SF-1 test raporları (öncesi / sonrası)</td><td>İSG</td><td>Emniyetin geri geldiğinin kanıtı</td><td>İmzalı; LAB 1 haritasına bağlı</td></tr>
+        <tr><td>Delil zinciri formları</td><td>Olay yöneticisi</td><td>Kanıtın hukuken geçerli kalması</td><td>Her teslimde imza + hash</td></tr>
+      </tbody>
+    </table>
+
+    <div class="warn"><b class="t">En sık hata: "Resetleyip devam edelim."</b> Bu makinede iki kez yanlış: (1) Arma Kart'ın hafızasındaki olay ve parametre izlerini sonsuza dek siler; (2) enerji dönüşünde bariyer beklenmedik şekilde hareket edebilir (SF-3 / GR-5). Önce emniyet, hemen sonra kanıt.</div>
+
+    <div class="box"><b>Kim neyi bildirir?</b> Arma (üretici): CRA Madde 14 — aktif istismar edilen açıkta 24 s erken uyarı, 72 s bildirim, düzeltme yayımlandıktan sonra en geç 14 gün içinde son rapor; ağır olayda son rapor 1 ay. Bildirim ENISA'nın tek bildirim platformu üzerinden yapılır (11.09.2026'dan beri yürürlükte). Tesis (kullanıcı): üreticiyi bilgilendirir; ulusal CSIRT'e (USOM / SOME) bildirir; kişisel veri ihlalinde KVKK'ya en geç 72 saat içinde bildirir. Tesis AB'de olsaydı NIS2 Madde 23 de aynı 24 s / 72 s / 1 ay takvimini tesise yüklerdi. <span class="v">V</span> senaryo ve kişiler eğitim kurgusudur, <b>Arma ürünü hakkında iddia değildir</b>.</div>
+
+    <div class="evidence">
+      <svg width="16" height="18" viewBox="0 0 16 18" fill="none" stroke="#14706a" stroke-width="1.6"><path d="M2 1.5h7.5L14 6v10.5H2z"/><path d="M9.5 1.5V6H14"/></svg>
+      <span>Bu föyün çıktısı <span class="hl">Incident Workflow</span> → Evidence Pack <span class="hl">EP 13 Incident Response</span> başlığına oturur.</span>
+    </div>
+  </div>
+
+  <div class="footer"><span>SAFETY 4.0 BOOTCAMP · Arma Mantar Bariyer Sürümü · Bu bir eğitim çıktısıdır, resmî denetim değildir.</span><span>3 / 3</span></div>
+</section>
+
+</body>
+</html>

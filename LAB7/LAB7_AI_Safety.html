@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<title>LAB 7 · AI Safety Challenge · Arma Mantar Bariyer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&family=Literata:opsz,wght@7..72,600;7..72,700&display=swap" rel="stylesheet">
+<style>
+  @page { size: A4; margin: 0; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: #fff; }
+  body {
+    font-family: 'Lato', 'Segoe UI', Arial, sans-serif;
+    color: #1f2a37; font-size: 9.3pt; line-height: 1.4;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  }
+  .page { width: 210mm; height: 297mm; position: relative; overflow: hidden; break-after: page; }
+  .page:last-child { break-after: auto; }
+
+  .band { height: 33mm; position: relative; overflow: hidden; color: #fff;
+          background: linear-gradient(100deg, #172238 0%, #2e2a52 48%, #6a52b0 100%); }
+  .band::after { content: ''; position: absolute; right: -16mm; top: -26mm; width: 72mm; height: 72mm;
+                 border-radius: 50%; background: rgba(255,255,255,0.10); }
+  .band .icon { position: absolute; left: 14mm; top: 9mm; width: 14mm; height: 14mm; border-radius: 50%;
+                border: 1.2px solid rgba(255,255,255,.55); background: rgba(255,255,255,.08);
+                display: flex; align-items: center; justify-content: center; }
+  .band .kicker { position: absolute; left: 32mm; top: 9.5mm; font-size: 7.2pt; letter-spacing: .26em;
+                  font-weight: 700; text-transform: uppercase; opacity: .92; }
+  .band h1 { position: absolute; left: 32mm; top: 13.5mm; margin: 0; font-family: 'Literata', Georgia, serif;
+             font-weight: 700; font-size: 21pt; letter-spacing: -.01em; }
+  .band .pill { position: absolute; right: 14mm; top: 15mm; border: 1px solid rgba(255,255,255,.65);
+                border-radius: 999px; padding: 1.8mm 4.2mm; font-size: 8pt; font-weight: 700;
+                background: rgba(255,255,255,.08); z-index: 2; }
+
+  .content { padding: 5.5mm 14mm 0 14mm; }
+  .meta { display: grid; grid-template-columns: 1.7fr 1.2fr 1fr; gap: 9mm; font-size: 8pt;
+          color: #64748b; font-weight: 700; }
+  .meta div { border-bottom: 1px solid #cbd5e1; padding-bottom: 1.4mm; }
+  .meta span { font-weight: 400; color: #111827; margin-left: 2.5mm; font-size: 8.6pt; }
+
+  .context { margin-top: 4.5mm; background: #edf2f5; border-radius: 2.5mm; padding: 3mm 4.5mm 3mm 7.5mm;
+             position: relative; font-size: 8.9pt; }
+  .context::before { content: ''; position: absolute; left: 3mm; top: 3mm; bottom: 3mm; width: 1.3mm;
+                     border-radius: 1mm; background: #7c5cc4; }
+  .context .hl { color: #13786e; font-weight: 700; }
+  .context b.t { color: #13786e; }
+  .scen { margin-top: 2.5mm; font-size: 8.5pt; color: #334155; font-style: italic; }
+  .scen b { font-style: normal; }
+
+  h2.task { font-family: 'Literata', Georgia, serif; font-weight: 700; font-size: 12.5pt; margin: 4.5mm 0 2.5mm 0;
+            display: flex; align-items: center; gap: 3mm; color: #1f2a37; }
+  h2.task::after { content: ''; flex: 1; height: 1px; background: #d5dee7; }
+
+  .flow svg, .thr svg { width: 100%; height: auto; display: block; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 7.9pt; }
+  th { background: #1f2d4d; color: #fff; text-align: left; font-weight: 700; padding: 1.8mm 2mm; font-size: 7.8pt; }
+  td { border: 1px solid #d9e2ea; padding: 1.6mm 2mm; vertical-align: top; color: #1f2a37; }
+  td.k { font-weight: 900; background: #f6f8fa; }
+  tr.plus td { background: #f5f2fc; }
+  .tag { display: inline-block; background: #efe9fb; color: #5b3fa5; border: 1px solid #cdbff0; border-radius: 1.2mm; padding: .3mm 1.4mm; font-size: 7pt; font-weight: 900; margin: .3mm .6mm .3mm 0; white-space: nowrap; }
+
+  .q { display: grid; grid-template-columns: 8mm 1fr; column-gap: 3mm; margin-bottom: 3mm; }
+  .num { width: 7mm; height: 7mm; border-radius: 50%; background: #7c5cc4; color: #fff;
+         font-family: 'Literata', Georgia, serif; font-weight: 700; font-size: 9.5pt;
+         display: flex; align-items: center; justify-content: center; margin-top: .3mm; }
+  .qt { font-weight: 700; color: #1f2a37; font-size: 9.4pt; margin-bottom: 1mm; }
+  .ans { color: #12324a; border-left: 2px solid #d6caf2; padding-left: 3mm; font-size: 8.9pt; }
+  .ans p { margin: 0 0 1.2mm 0; }
+  .ans ul, .ans ol { margin: .4mm 0 1mm 0; padding-left: 4.5mm; }
+  .ans li { margin-bottom: .6mm; }
+  .ans b { color: #0f2a40; }
+
+  .thrlist { list-style: none; margin: 1.6mm 0 0 11mm; padding: 0; font-size: 8.6pt; color: #12324a; }
+  .thrlist li { margin-bottom: .9mm; display: flex; gap: 2mm; align-items: baseline; }
+  .thrlist .sw { flex: none; width: 3.2mm; height: 3.2mm; border-radius: .8mm; border: 1px solid #94a3b8; position: relative; top: .5mm; }
+  .claim { margin-top: 3.5mm; background: #f5f2fc; border: 1px solid #d6caf2; border-left: 3px solid #7c5cc4; border-radius: 2mm; padding: 3mm 3.8mm; font-size: 8.7pt; }
+  .claim h3 { margin: 0 0 1.4mm 0; font-family: 'Literata', Georgia, serif; font-size: 10.5pt; color: #3f2c80; }
+  .claim ol { margin: .6mm 0 1mm 0; padding-left: 4.6mm; }
+  .claim li { margin-bottom: .6mm; }
+
+  .g, .v { display: inline-block; font-size: 6.6pt; font-weight: 900; line-height: 1; padding: .55mm 1.1mm;
+           border-radius: 1mm; vertical-align: 1px; margin-left: .6mm; font-style: normal; }
+  .g { background: #e2f3ef; color: #0f766e; border: 1px solid #9fd3c7; }
+  .v { background: #fff3dd; color: #92560a; border: 1px solid #efc983; }
+
+  .box { border: 1px solid #d9e2ea; border-radius: 2.5mm; padding: 2.4mm 3.2mm; font-size: 7.8pt; margin-top: 3mm; color: #475569; }
+  .evidence { margin-top: 3.5mm; border: 1px dashed #b8c6d3; border-radius: 2.5mm; padding: 2.6mm 4mm;
+              font-size: 8.4pt; display: flex; align-items: center; gap: 3mm; background: #f7f9fb; }
+  .evidence .hl { color: #14706a; font-weight: 700; }
+
+  .footer { position: absolute; left: 14mm; right: 14mm; bottom: 8mm; border-top: 1px solid #d9e2ea;
+            padding-top: 2mm; font-size: 7.2pt; color: #64748b; display: flex; justify-content: space-between; }
+</style>
+</head>
+<body>
+
+<!-- ============================ PAGE 1 ============================ -->
+<section class="page">
+  <div class="band">
+    <div class="icon">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.7" stroke-linejoin="round"><rect x="6.5" y="6.5" width="11" height="11" rx="2"/><rect x="9.5" y="9.5" width="5" height="5" rx=".8"/><path d="M9 3.5v3M15 3.5v3M9 17.5v3M15 17.5v3M3.5 9h3M3.5 15h3M17.5 9h3M17.5 15h3"/></svg>
+    </div>
+    <div class="kicker">Laboratuvar 7 · Arma Mantar Bariyer · Kimya Tesisi Girişi</div>
+    <h1>AI Safety Challenge</h1>
+    <div class="pill">Çıktı: AI Fail-Safe Decision</div>
+  </div>
+
+  <div class="content">
+    <div class="meta">
+      <div>Ad Soyad<span>Mehmet Onur Boyraz · 245541023</span></div>
+      <div>Grup<span></span></div>
+      <div>Tarih<span>20.10.2026</span></div>
+    </div>
+
+    <div class="context">
+      <b class="t">Kavram — Prediction ≠ Safety:</b> Yapay zekâ bir karar üretir; güvenliği garanti eden mimari <span class="hl">YZ'nin dışında</span> tanımlanmalıdır. Araçlar: <b>fail-safe · human override · monitoring · confidence threshold · fallback</b>.
+      <div class="scen"><b>Senaryo:</b> Kapıya ARM.v19™ yapay zekâsının eklenmesi planlanıyor; proje aşaması değerlendirmesi yapıyorsunuz. Arma, ARM.v19™ ile ürünlerinin "bazı durumlarda kendileri karar verdiğini" ve iş güvenliğini "garanti altına aldığını" söylüyor<span class="g">G</span>. Planlanan kullanım<span class="v">V</span>: kamera görüntüsünden plaka tanıma, araç sınıflandırma ve takip eden araç (tailgating) tespiti; çıktı bariyere "aç" ya da "kapalı tut" talebi olarak gidiyor.</div>
+    </div>
+
+    <div class="flow" style="margin-top:3.5mm;">
+      <svg viewBox="0 0 740 152" xmlns="http://www.w3.org/2000/svg" font-family="Lato, 'Segoe UI', Arial, sans-serif">
+        <defs>
+          <marker id="af" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#64748b"/></marker>
+          <marker id="afR" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#b3261e"/></marker>
+        </defs>
+        <g text-anchor="middle" font-size="9.5" font-weight="900">
+          <rect x="0" y="8" width="108" height="48" rx="8" fill="#1a9c8f"/>
+          <text x="54" y="29" fill="#fff">Kamera</text><text x="54" y="44" font-size="8.2" font-weight="700" fill="#e6fffb">plaka · araç · şerit</text>
+          <rect x="126" y="8" width="108" height="48" rx="8" fill="#e5a00d"/>
+          <text x="180" y="29" fill="#1f2a37">ARM.v19™</text><text x="180" y="44" font-size="8.2" font-weight="700" fill="#3a2a00">YZ modeli</text>
+          <rect x="252" y="8" width="112" height="48" rx="8" fill="#1a9c8f"/>
+          <text x="308" y="29" fill="#fff">YETKİLİ</text><text x="308" y="44" font-size="8.2" font-weight="700" fill="#e6fffb">BELİRSİZ · TEHDİT</text>
+          <rect x="382" y="8" width="112" height="48" rx="8" fill="#1a9c8f"/>
+          <text x="438" y="29" fill="#fff">Talep</text><text x="438" y="44" font-size="8.2" font-weight="700" fill="#e6fffb">"aç" / "kapalı tut"</text>
+          <rect x="512" y="8" width="112" height="48" rx="8" fill="#b3261e"/>
+          <text x="568" y="29" fill="#fff">Kapı</text><text x="568" y="44" font-size="8.2" font-weight="700" fill="#fde2df">SF-1 + görevli</text>
+          <rect x="642" y="8" width="98" height="48" rx="8" fill="#1f2d4d"/>
+          <text x="691" y="36" fill="#fff">Bariyer ×3</text>
+        </g>
+        <g stroke="#64748b" stroke-width="1.6">
+          <line x1="109" y1="32" x2="124" y2="32" marker-end="url(#af)"/><line x1="235" y1="32" x2="250" y2="32" marker-end="url(#af)"/>
+          <line x1="365" y1="32" x2="380" y2="32" marker-end="url(#af)"/><line x1="495" y1="32" x2="510" y2="32" marker-end="url(#af)"/>
+          <line x1="625" y1="32" x2="640" y2="32" marker-end="url(#af)"/>
+        </g>
+        <!-- outside-AI band -->
+        <rect x="0" y="80" width="740" height="66" rx="9" fill="#fbe9e7" stroke="#b3261e" stroke-width="1.4" stroke-dasharray="6 4"/>
+        <text x="12" y="97" font-size="8.8" font-weight="900" fill="#b3261e" letter-spacing=".8">YZ'NİN DIŞINDA — güvenliği bu katman garanti eder</text>
+        <g font-size="8.4" fill="#1f2a37">
+          <rect x="12" y="105" width="134" height="32" rx="6" fill="#fff" stroke="#e8b4ad"/><text x="79" y="119" text-anchor="middle" font-weight="900">SF-1 (Z0)</text><text x="79" y="131" text-anchor="middle">alan doluysa hareket yok</text>
+          <rect x="156" y="105" width="134" height="32" rx="6" fill="#fff" stroke="#e8b4ad"/><text x="223" y="119" text-anchor="middle" font-weight="900">Varsayılan: kapalı kal</text><text x="223" y="131" text-anchor="middle">şüphede kapı açılmaz</text>
+          <rect x="300" y="105" width="134" height="32" rx="6" fill="#fff" stroke="#e8b4ad"/><text x="367" y="119" text-anchor="middle" font-weight="900">Görevli + override</text><text x="367" y="131" text-anchor="middle">belirsiz ve riskli kararlar</text>
+          <rect x="444" y="105" width="134" height="32" rx="6" fill="#fff" stroke="#e8b4ad"/><text x="511" y="119" text-anchor="middle" font-weight="900">Sas kilidi</text><text x="511" y="131" text-anchor="middle">iki hat aynı anda inmez</text>
+          <rect x="588" y="105" width="140" height="32" rx="6" fill="#fff" stroke="#e8b4ad"/><text x="658" y="119" text-anchor="middle" font-weight="900">İzleme + kayıt</text><text x="658" y="131" text-anchor="middle">her karar görüntüsüyle</text>
+        </g>
+        <line x1="568" y1="80" x2="568" y2="58" stroke="#b3261e" stroke-width="1.8" marker-end="url(#afR)"/>
+      </svg>
+    </div>
+    <div style="font-size:7.6pt;color:#475569;margin-top:1mm;">YZ'nin çıktısı yalnızca bir <b>talep</b>tir. Talebin harekete dönüşüp dönüşmeyeceğine, YZ'nin dışındaki kırmızı kapı karar verir.</div>
+
+    <h2 class="task">Görev — üç başarısızlıkta güvenli davranış</h2>
+    <div class="q">
+      <div class="num">1</div>
+      <div>
+        <div class="qt">Model yanlış sınıflandırdı: Yetkisiz bir araca "YETKİLİ" dedi (ör. klonlanmış plaka). Sistem ne yapmalı? İkinci kontrol / insan onayı var mı?</div>
+        <div class="ans">
+          <p><b>YZ tek başına kapıyı açamaz.</b> Üç katmanlı ikinci kontrol var:</p>
+          <ol>
+            <li><b>Bağımsız ikinci faktör:</b> plaka + o güne ait tanker randevusu + araç etiketi/kart (Arma'nın OGS/HGS ve kart okuyucu uyumu<span class="g">G</span>). Üç faktörden en az ikisi uyuşmazsa "aç" talebi oluşmaz.</li>
+            <li><b>İnsan onayı:</b> tanker ve tanınmayan araçlarda görevli görüntüyü görüp onaylar. Proje aşamasında bu, tüm açılışlar için geçerli.</li>
+            <li><b>Sas kilidi:</b> dış hat açılsa bile görevli içerideki aracı doğrulamadan iç hat inmez. Tek bir yanlış "YETKİLİ" tesise erişim için yetmez.</li>
+          </ol>
+          <p><b>Ters yön, yani emniyet:</b> YZ "araç geçti, alan boş" derse bu karar ona bırakılmaz. Yükselme izni SF-1'in sensörlerinden (loop + fotosel + radar) gelir. YZ'nin yanlışı en fazla bir talebi bozar; hareketi bozamaz.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer"><span>SAFETY 4.0 BOOTCAMP · Arma Mantar Bariyer Sürümü · Bu bir eğitim çıktısıdır, resmî denetim değildir.</span><span>1 / 3</span></div>
+</section>
+
+<!-- ============================ PAGE 2 ============================ -->
+<section class="page">
+  <div class="content" style="padding-top: 11mm;">
+    <div class="q">
+      <div class="num">2</div>
+      <div>
+        <div class="qt">Girdi manipüle edildi: Kamera verisi bozuk/sahte. Nasıl fark edilir? Şüpheli girdide ne yapılır?</div>
+        <div class="ans">
+          <p><b>Nasıl fark edilir?</b></p>
+          <ul>
+            <li><b>Tazelik:</b> her karede zaman damgası ve sıra sayacı var; donmuş ya da tekrar eden kare (aynı hash) alarm üretir. Tekrar oynatılan video böyle yakalanır.</li>
+            <li><b>Akış bütünlüğü:</b> kamera ile YZ kutusu arasındaki akış Z2 içinde, kimliği doğrulanmış ve imzalı. LAB 2'de kameranın varsayılan parolası zaten kaldırıldı.</li>
+            <li><b>Fiziksel çapraz kontrol:</b> loop "araç var" derken kamerada araç yoksa, ya da tersi, girdi tutarsız sayılır.</li>
+            <li><b>Faktör uyumu:</b> plaka ↔ etiket/kart ↔ randevu ↔ araç tipi ve rengi. Basılı sahte plaka kızılötesi görüntüde gerçek, yansıtıcı plakadan farklı görünür.</li>
+            <li><b>Görüntü kalitesi:</b> bulanıklık, aşırı parlama (lazer ya da IR ile kör etme), kapatılmış lens → kalite skoru düşer.</li>
+          </ul>
+          <p><b>Şüpheli girdide ne yapılır?</b> YZ'nin çıktısı yok sayılır; bariyer <b>kapalı kalır</b>. Görevli aracı elle doğrular, güvenlik merkezine alarm gider ve olay kaydı açılır (LAB 6'nın tetikleyicisi). Şüpheli bir girdi hiçbir koşulda hareket üretmez.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="q">
+      <div class="num">3</div>
+      <div>
+        <div class="qt">Confidence düştü: Model "emin değilim" diyor. Eşik ne olmalı? Altında: dur / insana sor / fallback?</div>
+        <div class="ans">
+          <p>Eşik <b>asimetrik</b> olmalı. Yanlış bir "YETKİLİ" BEKRA kapsamındaki bir tesiste felakete yol açabilir (S = 3); yanlış bir "red" ise yalnızca birkaç dakikalık gecikme demektir. Bu yüzden kabul eşiği yüksek tutulur ve belirsiz bölge insana bırakılır:</p>
+        </div>
+      </div>
+    </div>
+    <div class="thr">
+      <svg viewBox="0 0 740 58" xmlns="http://www.w3.org/2000/svg" font-family="Lato, 'Segoe UI', Arial, sans-serif">
+        <rect x="20" y="22" width="560" height="30" fill="#f6d5d0"/>
+        <rect x="580" y="22" width="105" height="30" fill="#fbe7b5"/>
+        <rect x="685" y="22" width="35" height="30" fill="#bfe6dd"/>
+        <rect x="20" y="22" width="700" height="30" fill="none" stroke="#94a3b8"/>
+        <g font-size="8.6" font-weight="900" text-anchor="middle" fill="#1f2a37">
+          <text x="20" y="15">0</text><text x="580" y="15">0,80</text><text x="685" y="15">0,95</text><text x="720" y="15">1</text>
+          <text x="300" y="41" fill="#7f1d1d">FALLBACK — kapalı kal</text>
+          <text x="632" y="41" fill="#7a5200">İNSANA SOR</text>
+          <text x="702" y="41" font-size="7.6" fill="#0f5e52">OTO</text>
+        </g>
+      </svg>
+    </div>
+    <ul class="thrlist">
+      <li><span class="sw" style="background:#f6d5d0"></span><span><b>&lt; 0,80</b>, görüntü yok ya da kalite düşük → <b>fallback:</b> bariyer kapalı kalır; kart/etiket + görevli prosedürüne dönülür (YZ'siz yol).</span></li>
+      <li><span class="sw" style="background:#fbe7b5"></span><span><b>0,80–0,95</b> → <b>insana sor:</b> görevli, görüntüyü ve skoru WOC'ta görür; onaylar ya da reddeder.</span></li>
+      <li><span class="sw" style="background:#bfe6dd"></span><span><b>≥ 0,95</b> ve ikinci faktör uyuşuyor → <b>otomatik "aç talebi"</b>; bu talep de SF-1'den ve sas kilidinden geçer.</span></li>
+    </ul>
+    <div class="ans" style="margin:2mm 0 0 11mm;">
+      <p><b>Eşiklerin dayanağı<span class="v">V</span>:</b> değerler sahada gece, yağmur ve toz koşulları da dahil ölçülerek kalibre edilir; hedef, yanlış kabul oranının 1/10.000'in altında kalması. Aylık gözden geçirilir. Eşik değişikliği yalnız yerinde ve değişiklik kaydıyla yapılır (LAB 4, GR-3 mantığı). Güven dağılımı kayarsa (drift) alarm üretilir.</p>
+      <p><b>Kritik ayrıntı:</b> düşük güven hiçbir zaman "yüksel" anlamına gelmez. Bariyer yalnızca bulunduğu durumda, yani kapalı kalır. "Dur" burada güvenli yöndür.</p>
+    </div>
+  </div>
+
+  <div class="footer"><span>SAFETY 4.0 BOOTCAMP · Arma Mantar Bariyer Sürümü · Bu bir eğitim çıktısıdır, resmî denetim değildir.</span><span>2 / 3</span></div>
+</section>
+
+<!-- ============================ PAGE 3 ============================ -->
+<section class="page">
+  <div class="content" style="padding-top: 11mm;">
+    <h2 class="task" style="margin-top:0;">Karar tablosu — AI Fail-Safe Decision</h2>
+    <table>
+      <thead><tr><th style="width:21%">Başarısızlık</th><th>Tanımladığımız güvenli davranış</th><th style="width:22%">Hangi kavramla?</th></tr></thead>
+      <tbody>
+        <tr><td class="k">Model yanlış sınıflandırdı</td><td>YZ tek başına açamaz: üç bağımsız faktörden en az ikisi + yüksek riskli araçta görevli onayı. Sas kilidi iç hattı kapalı tutar. Yükselme kararı YZ'de değil, SF-1'de. Her karar görüntüsüyle kaydedilir; yanlış kabul oranı aylık izlenir.</td><td><span class="tag">human override</span><span class="tag">fail-safe</span><span class="tag">monitoring</span></td></tr>
+        <tr><td class="k">Girdi manipüle edildi</td><td>Tazelik, bütünlük ve fiziksel çapraz kontrol. Şüphede YZ çıktısı yok sayılır, bariyer kapalı kalır, görevli doğrular; alarm ve olay kaydı açılır.</td><td><span class="tag">monitoring</span><span class="tag">fail-safe</span><span class="tag">fallback</span></td></tr>
+        <tr><td class="k">Confidence düştü</td><td>≥ 0,95 ve ikinci faktör → otomatik aç talebi · 0,80–0,95 → insana sor · &lt; 0,80 → kapalı kal + kart/görevli prosedürü. Eşikler yalnız yerinde değişir; drift izlenir.</td><td><span class="tag">confidence threshold</span><span class="tag">human override</span><span class="tag">fallback</span></td></tr>
+        <tr class="plus"><td class="k">+1 · YZ kutusu çöktü ya da sinyal kesildi</td><td>Kalp atışı (heartbeat) kesilince YZ yolu otomatik devre dışı kalır. Kapı YZ'siz moda (kart + görevli) geçer; bariyer konumunu korur, kendiliğinden hareket etmez (SF&#8209;3).</td><td><span class="tag">fail-safe</span><span class="tag">fallback</span></td></tr>
+      </tbody>
+    </table>
+
+    <div class="claim">
+      <h3>ARM.v19™'un "iş güvenliğini garanti altına alır" iddiasına cevabımız</h3>
+      <p style="margin:0 0 1mm 0;">YZ bir tahmin üretir ve tahmin garanti edemez. Bu kapıda garantiyi YZ'nin dışındaki dört şey veriyor:</p>
+      <ol>
+        <li><b>SF-1 (Z0):</b> alan doluyken hiçbir talep hareket üretmez (LAB 1).</li>
+        <li><b>Varsayılan "kapalı kal":</b> şüphe, arıza ya da düşük güven kapıyı açmaz.</li>
+        <li><b>Görevli onayı ve override:</b> belirsiz ve yüksek riskli kararlar insanda.</li>
+        <li><b>Sas kilidi:</b> tek bir yanlış karar tesise erişim için yetmez (LAB 3).</li>
+      </ol>
+      <p style="margin:1.4mm 0 0 0;">Bu mimaride YZ'nin işi kapıyı hızlandırmak, görevliyi rahatlatmak ve şüpheliyi işaretlemek; insanı korumak değil. Bu, YZ'yi değersiz kılmaz; sadece doğru yere koyar. Üreticinin cümlesi bir pazarlama ifadesi olarak okunmalı; mühendislik dilinde "garanti" ancak YZ'nin dışındaki doğrulanmış bir emniyet fonksiyonuyla verilebilir.</p>
+    </div>
+
+    <div class="box"><b>Mevzuat bunu destekliyor:</b> AB Makine Yönetmeliği 2023/1230, emniyet fonksiyonu sağlayan ve makine öğrenmesiyle kendini geliştiren bileşenleri Ek I Bölüm A'ya koyar; bunlar için üçüncü taraf uygunluk değerlendirmesi zorunludur. AB Yapay Zekâ Yasası (2024/1689) da böyle bir ürünün emniyet bileşeni olan YZ'yi "yüksek riskli" sayar (Madde 6(1)). YZ'yi emniyet zincirinin dışında tutmak hem mühendislik hem mevzuat açısından doğru karar. Ayrıca bkz. ISO/IEC TR 5469:2024 (YZ ve fonksiyonel emniyet). <span class="g">G</span> üreticinin sitesinde yazan bilgi · <span class="v">V</span> eğitim senaryosu varsayımı; ARM.v19™'un gerçek iç yapısı hakkında iddia değildir.</div>
+
+    <div class="evidence">
+      <svg width="16" height="18" viewBox="0 0 16 18" fill="none" stroke="#14706a" stroke-width="1.6"><path d="M2 1.5h7.5L14 6v10.5H2z"/><path d="M9.5 1.5V6H14"/></svg>
+      <span>Bu föyün çıktısı <span class="hl">AI Fail-Safe Decision</span> → Evidence Pack <span class="hl">EP 03 + EP 15</span> başlığına oturur.</span>
+    </div>
+  </div>
+
+  <div class="footer"><span>SAFETY 4.0 BOOTCAMP · Arma Mantar Bariyer Sürümü · Bu bir eğitim çıktısıdır, resmî denetim değildir.</span><span>3 / 3</span></div>
+</section>
+
+</body>
+</html>

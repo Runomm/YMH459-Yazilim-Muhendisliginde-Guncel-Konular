@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<title>LAB 5 · SBOM / CVE / Patch · Arma Mantar Bariyer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&family=Literata:opsz,wght@7..72,600;7..72,700&display=swap" rel="stylesheet">
+<style>
+  @page { size: A4; margin: 0; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: #fff; }
+  body {
+    font-family: 'Lato', 'Segoe UI', Arial, sans-serif;
+    color: #1f2a37; font-size: 9.3pt; line-height: 1.4;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  }
+  .page { width: 210mm; height: 297mm; position: relative; overflow: hidden; break-after: page; }
+  .page:last-child { break-after: auto; }
+
+  .band { height: 33mm; position: relative; overflow: hidden; color: #fff;
+          background: linear-gradient(100deg, #172238 0%, #3a3a33 48%, #a8862c 100%); }
+  .band::after { content: ''; position: absolute; right: -16mm; top: -26mm; width: 72mm; height: 72mm;
+                 border-radius: 50%; background: rgba(255,255,255,0.10); }
+  .band .icon { position: absolute; left: 14mm; top: 9mm; width: 14mm; height: 14mm; border-radius: 50%;
+                border: 1.2px solid rgba(255,255,255,.55); background: rgba(255,255,255,.08);
+                display: flex; align-items: center; justify-content: center; }
+  .band .kicker { position: absolute; left: 32mm; top: 9.5mm; font-size: 7.2pt; letter-spacing: .26em;
+                  font-weight: 700; text-transform: uppercase; opacity: .92; }
+  .band h1 { position: absolute; left: 32mm; top: 13.5mm; margin: 0; font-family: 'Literata', Georgia, serif;
+             font-weight: 700; font-size: 21pt; letter-spacing: -.01em; }
+  .band .pill { position: absolute; right: 14mm; top: 15mm; border: 1px solid rgba(255,255,255,.65);
+                border-radius: 999px; padding: 1.8mm 4.2mm; font-size: 8pt; font-weight: 700;
+                background: rgba(255,255,255,.08); z-index: 2; }
+
+  .content { padding: 5.5mm 14mm 0 14mm; }
+  .meta { display: grid; grid-template-columns: 1.7fr 1.2fr 1fr; gap: 9mm; font-size: 8pt;
+          color: #64748b; font-weight: 700; }
+  .meta div { border-bottom: 1px solid #cbd5e1; padding-bottom: 1.4mm; }
+  .meta span { font-weight: 400; color: #111827; margin-left: 2.5mm; font-size: 8.6pt; }
+
+  .context { margin-top: 4.5mm; background: #edf2f5; border-radius: 2.5mm; padding: 3.2mm 4.5mm 3.2mm 7.5mm;
+             position: relative; font-size: 8.9pt; }
+  .context::before { content: ''; position: absolute; left: 3mm; top: 3.2mm; bottom: 3.2mm; width: 1.3mm;
+                     border-radius: 1mm; background: #e5a00d; }
+  .context .hl { color: #13786e; font-weight: 700; }
+  .context b.t { color: #13786e; }
+
+  h2.task { font-family: 'Literata', Georgia, serif; font-weight: 700; font-size: 12.5pt; margin: 4.5mm 0 2.5mm 0;
+            display: flex; align-items: center; gap: 3mm; color: #1f2a37; }
+  h2.task::after { content: ''; flex: 1; height: 1px; background: #d5dee7; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 7.9pt; }
+  th { background: #1f2d4d; color: #fff; text-align: left; font-weight: 700; padding: 1.8mm 2mm; font-size: 7.8pt; }
+  td { border: 1px solid #d9e2ea; padding: 1.5mm 2mm; vertical-align: top; color: #1f2a37; }
+  table.rec td:first-child { width: 22%; font-weight: 900; background: #f6f8fa; }
+  .vrec { display: grid; grid-template-columns: 2.3fr .7fr 1.4fr 1.4fr .9fr; border: 1px solid #d9e2ea; border-radius: 2mm; overflow: hidden; background: #fbfcfd; }
+  .vrec > div { padding: 1.8mm 2.4mm; border-right: 1px solid #d9e2ea; font-size: 8pt; }
+  .vrec > div:nth-child(5) { border-right: none; }
+  .vrec span { display: block; font-size: 6.8pt; font-weight: 900; color: #64748b; text-transform: uppercase; letter-spacing: .06em; margin-bottom: .4mm; }
+  .vrec b { font-size: 9pt; display: block; }
+  .vrec small { display: block; font-size: 7.4pt; color: #475569; }
+  .vrec .wide { grid-column: 1 / -1; border-top: 1px solid #d9e2ea; border-right: none; }
+  .vrec .wide span { display: inline-block; margin-right: 2mm; }
+  td.yes { font-weight: 900; color: #b3261e; white-space: nowrap; }
+  td.no { font-weight: 700; color: #64748b; white-space: nowrap; }
+  td.part { font-weight: 900; color: #a16207; }
+  .hit { background: #fff5e6; }
+  .mono { font-family: Consolas, 'Courier New', monospace; font-size: 7.6pt; }
+
+  .q { display: grid; grid-template-columns: 8mm 1fr; column-gap: 3mm; margin-bottom: 3mm; }
+  .num { width: 7mm; height: 7mm; border-radius: 50%; background: #e5a00d; color: #fff;
+         font-family: 'Literata', Georgia, serif; font-weight: 700; font-size: 9.5pt;
+         display: flex; align-items: center; justify-content: center; margin-top: .3mm; }
+  .qt { font-weight: 700; color: #1f2a37; font-size: 9.4pt; margin-bottom: 1mm; }
+  .ans { color: #12324a; border-left: 2px solid #f0d9a3; padding-left: 3mm; font-size: 8.9pt; }
+  .ans p { margin: 0 0 1.2mm 0; }
+  .ans ol { margin: .4mm 0 1mm 0; padding-left: 4.5mm; }
+  .ans li { margin-bottom: .6mm; }
+  .ans b { color: #0f2a40; }
+
+  .duo { display: grid; grid-template-columns: 1fr 1fr; gap: 4mm; margin: 1mm 0 1.4mm 0; }
+  .duo > div { border: 1px solid #d9e2ea; border-radius: 2.2mm; padding: 2.2mm 2.8mm; font-size: 8.4pt; background: #fbfcfd; }
+  .duo .h { font-weight: 900; font-size: 8.4pt; margin-bottom: .8mm; }
+  .duo .now .h { color: #b3261e; } .duo .goal .h { color: #14706a; }
+  .verdict { display: inline-block; color: #fff; font-weight: 900; border-radius: 1.4mm; padding: .4mm 1.8mm; font-size: 8pt; margin-left: 1mm; }
+  .verdict.bad { background: #b3261e; } .verdict.ok { background: #14706a; } .verdict.mid { background: #a16207; }
+
+  .flow svg { width: 100%; height: auto; display: block; }
+  .legend { font-size: 7.5pt; color: #475569; margin-top: 1mm; }
+
+  .g, .v { display: inline-block; font-size: 6.6pt; font-weight: 900; line-height: 1; padding: .55mm 1.1mm;
+           border-radius: 1mm; vertical-align: 1px; margin-left: .6mm; }
+  .g { background: #e2f3ef; color: #0f766e; border: 1px solid #9fd3c7; }
+  .v { background: #fff3dd; color: #92560a; border: 1px solid #efc983; }
+
+  .note { font-size: 7.8pt; color: #475569; margin-top: 1.4mm; }
+  .box { border: 1px solid #d9e2ea; border-radius: 2.5mm; padding: 2.4mm 3.2mm; font-size: 7.8pt; margin-top: 3mm; color: #475569; }
+  .evidence { margin-top: 3.5mm; border: 1px dashed #b8c6d3; border-radius: 2.5mm; padding: 2.6mm 4mm;
+              font-size: 8.4pt; display: flex; align-items: center; gap: 3mm; background: #f7f9fb; }
+  .evidence .hl { color: #14706a; font-weight: 700; }
+
+  .footer { position: absolute; left: 14mm; right: 14mm; bottom: 8mm; border-top: 1px solid #d9e2ea;
+            padding-top: 2mm; font-size: 7.2pt; color: #64748b; display: flex; justify-content: space-between; }
+</style>
+</head>
+<body>
+
+<!-- ============================ PAGE 1 ============================ -->
+<section class="page">
+  <div class="band">
+    <div class="icon">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.7" stroke-linejoin="round"><path d="M12 2.8 20 7.2v9.6L12 21.2 4 16.8V7.2Z"/><path d="M4 7.2 12 11.6 20 7.2M12 11.6v9.6"/></svg>
+    </div>
+    <div class="kicker">Laboratuvar 5 · Arma Mantar Bariyer · Kimya Tesisi Girişi</div>
+    <h1>SBOM / CVE / Patch</h1>
+    <div class="pill">Çıktı: Vulnerability Decision</div>
+  </div>
+
+  <div class="content">
+    <div class="meta">
+      <div>Ad Soyad<span>Mehmet Onur Boyraz · 245541023</span></div>
+      <div>Grup<span></span></div>
+      <div>Tarih<span>20.10.2026</span></div>
+    </div>
+
+    <div class="context">
+      <b class="t">Kavram:</b> <span class="hl">SBOM</span> yazılım malzeme listesidir · <span class="hl">CVE</span> açığın kayıt numarasıdır · <span class="hl">CVSS</span> ciddiyeti 0–10 arası ölçer. Bir CVE'nin sizi etkilemesi için üç şart birden gerekir: <b>bileşen var</b>, <b>sürüm etkileniyor</b>, <b>açık ulaşılabilir</b>. CVSS önemi gösterir, riski değil; risk, ulaşılabilirliğe ve emniyet fonksiyonunun bağımsızlığına bağlıdır.
+    </div>
+
+    <h2 class="task">Verilen zafiyet kaydı</h2>
+    <div class="vrec">
+      <div><span>Bileşen</span><b>Arma Kart Component X</b><small>kontrol kartı firmware kütüphanesi</small></div>
+      <div><span>Sürüm</span><b>2.4</b></div>
+      <div><span>CVE</span><b>CVE-XXXX-XXXX</b></div>
+      <div><span>Önem</span><b style="color:#b3261e">Critical (CVSS 9.8)</b></div>
+      <div><span>Yama</span><b>Mevcut</b></div>
+      <div class="wide"><span>Vektör<i class="v" style="font-style:normal">V</i></span><code class="mono">CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H</code> — ağdan, kimlik doğrulaması ve kullanıcı etkileşimi gerektirmeden uzaktan kod çalıştırma (9.8'in tipik vektörü)</div>
+    </div>
+
+    <h2 class="task">SBOM'dan kesit<span class="v" style="font-family:Lato,sans-serif;">V</span></h2>
+    <table>
+      <thead><tr><th style="width:7%">No.</th><th style="width:20%">Varlık (LAB 2)</th><th>Yazılım bileşenleri</th><th style="width:13%">Component X?</th></tr></thead>
+      <tbody>
+        <tr class="hit"><td>3</td><td><b>Arma Kart [EE51KAR]</b><span class="g">G</span></td><td>Kart firmware'i · RTOS çekirdeği · TCP/IP yığını · <b>Component X 2.4 (HTTP/ağ kütüphanesi)</b> · RS-485/Wiegand sürücüleri</td><td class="yes">VAR · 2.4</td></tr>
+        <tr><td>4</td><td>Safety PLC (hedef)</td><td>PLC üreticisinin firmware'i · emniyet programı (imzalı, CRC'li)</td><td class="no">yok</td></tr>
+        <tr><td>13</td><td>Kulübe PC</td><td>Windows 10 IoT · Arma WOC<span class="g">G</span> · .NET çalışma zamanı · TeamViewer (kaldırılacak)</td><td class="no">yok</td></tr>
+        <tr><td>14</td><td>4G router</td><td>Router işletim sistemi · VPN istemcisi</td><td class="no">yok</td></tr>
+        <tr><td>10 · 12</td><td>Plaka kamerası · YZ kutusu</td><td>Kamera firmware'i · Linux + çıkarım motoru + model dosyası</td><td class="no">yok</td></tr>
+        <tr><td>D1</td><td>Arma Mobil<span class="g">G</span></td><td>Android/iOS uygulaması + üçüncü taraf kütüphaneler</td><td class="no">yok</td></tr>
+      </tbody>
+    </table>
+    <div class="note">SBOM'u üretici sağlar (CycloneDX ya da SPDX biçiminde). AB Siber Dayanıklılık Yasası (CRA), üreticiden en azından üst düzey bağımlılıkları kapsayan, makinece okunabilir bir SBOM ister (Ek I, Bölüm II; 11.12.2027'den itibaren). Bu kesit örnektir.</div>
+
+    <h2 class="task">Görev — karar akışı</h2>
+    <div class="q">
+      <div class="num">1</div>
+      <div>
+        <div class="qt">Bu CVE sizi gerçekten etkiliyor mu? (üç şartı kontrol edin)</div>
+      </div>
+    </div>
+    <table>
+      <thead><tr><th style="width:19%">Şart</th><th style="width:25%">Nasıl kontrol edilir?</th><th style="width:28%">Bugün<span class="v">V</span></th><th style="width:28%">Hedef mimaride (LAB 4)</th></tr></thead>
+      <tbody>
+        <tr><td><b>1 · Bileşen var mı?</b></td><td>Tüm SBOM'larda Component X aranır</td><td class="yes">EVET — Arma Kart'ta</td><td class="yes">EVET — aynı kart</td></tr>
+        <tr><td><b>2 · Sürüm etkileniyor mu?</b></td><td>Etkilenen aralık (ör. &lt; 2.6) ile 2.4 karşılaştırılır</td><td class="yes">EVET</td><td class="yes">EVET</td></tr>
+        <tr><td><b>3 · Ulaşılabilir mi?</b></td><td>AV:N, yani ağdan: hangi bölgeden?</td><td class="yes" style="white-space:normal">EVET — internet (4G), Wi-Fi, kulübe ağı</td><td class="part">KISMEN — yalnız kulübe PC'sinden, C3 izin listesiyle</td></tr>
+        <tr><td colspan="2"><b>Sonuç</b></td><td><span class="verdict bad">3/3 · etkiliyor, ACİL</span></td><td><span class="verdict mid">2/3 + dar yol · etkiliyor, planlı</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="footer"><span>SAFETY 4.0 BOOTCAMP · Arma Mantar Bariyer Sürümü · Bu bir eğitim çıktısıdır, resmî denetim değildir.</span><span>1 / 3</span></div>
+</section>
+
+<!-- ============================ PAGE 2 ============================ -->
+<section class="page">
+  <div class="content" style="padding-top: 11mm;">
+    <h2 class="task" style="margin-top:0;">Karar akışı (bu CVE için)</h2>
+    <div class="flow">
+      <svg viewBox="0 0 740 234" xmlns="http://www.w3.org/2000/svg" font-family="Lato, 'Segoe UI', Arial, sans-serif">
+        <defs>
+          <marker id="ak" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#475569"/></marker>
+        </defs>
+        <g font-size="9" fill="#1f2a37" text-anchor="middle">
+          <!-- row 1 -->
+          <rect x="0" y="8" width="104" height="50" rx="8" fill="#1f2d4d"/>
+          <text x="52" y="29" font-weight="900" fill="#fff">CVE yayınlandı</text><text x="52" y="44" font-size="8.5" fill="#dbe4f0">CVSS 9.8</text>
+          <rect x="126" y="8" width="128" height="50" rx="8" fill="#fff7e8" stroke="#e5a00d" stroke-width="1.4"/>
+          <text x="190" y="29" font-weight="900">① Bileşen</text><text x="190" y="44" font-size="8.5">SBOM'da var mı?</text>
+          <rect x="276" y="8" width="128" height="50" rx="8" fill="#fff7e8" stroke="#e5a00d" stroke-width="1.4"/>
+          <text x="340" y="29" font-weight="900">② Sürüm</text><text x="340" y="44" font-size="8.5">etkilenen aralıkta mı?</text>
+          <rect x="426" y="8" width="128" height="50" rx="8" fill="#fff7e8" stroke="#e5a00d" stroke-width="1.4"/>
+          <text x="490" y="29" font-weight="900">③ Açık</text><text x="490" y="44" font-size="8.5">ulaşılabilir mi?</text>
+          <rect x="576" y="8" width="144" height="50" rx="8" fill="#fff7e8" stroke="#e5a00d" stroke-width="1.4"/>
+          <text x="648" y="25" font-weight="900">④ Aktif istismar var mı</text><text x="648" y="38" font-weight="900">ya da SF-1 aynı kartta mı?</text><text x="648" y="51" font-size="8">(KEV · üretici uyarısı · loglar)</text>
+          <!-- no exits -->
+          <rect x="150" y="76" width="216" height="24" rx="6" fill="#f1f5f9" stroke="#cbd5e1"/>
+          <text x="258" y="92" font-size="8.5">hayır → SBOM kaydına not düş, kapat</text>
+          <rect x="414" y="76" width="152" height="24" rx="6" fill="#f1f5f9" stroke="#cbd5e1"/>
+          <text x="490" y="92" font-size="8.5">hayır → planlı yama + izle</text>
+          <!-- outcomes -->
+          <rect x="576" y="76" width="144" height="36" rx="7" fill="#fbe9e7" stroke="#b3261e" stroke-width="1.4"/>
+          <text x="648" y="90" font-size="8.5" font-weight="900" fill="#b3261e">EVET (bugün): izole et,</text><text x="648" y="104" font-size="8.5" font-weight="900" fill="#b3261e">manuel mod · yama ≤ 72 saat</text>
+          <rect x="576" y="120" width="144" height="36" rx="7" fill="#e3f3ef" stroke="#14706a" stroke-width="1.4"/>
+          <text x="648" y="134" font-size="8.5" font-weight="900" fill="#14706a">HAYIR (hedef): C3 bloğu</text><text x="648" y="148" font-size="8.5" font-weight="900" fill="#14706a">+ IDS · yama ≤ 7 gün</text>
+          <!-- no patch -->
+          <rect x="0" y="120" width="250" height="34" rx="7" fill="#fffbf0" stroke="#e5a00d" stroke-dasharray="5 3"/>
+          <text x="125" y="134" font-size="8.5" font-weight="900">Yama yok / uygulanamıyor →</text><text x="125" y="147" font-size="8.5">telafi edici önlem + süreli risk kabulü (5)</text>
+          <!-- pipeline -->
+          <rect x="0" y="186" width="132" height="42" rx="7" fill="#eef2f5" stroke="#cbd5e1"/>
+          <text x="66" y="203" font-weight="900">Yama imzası</text><text x="66" y="217" font-size="8.5">ve hash'i doğrula</text>
+          <rect x="150" y="186" width="132" height="42" rx="7" fill="#eef2f5" stroke="#cbd5e1"/>
+          <text x="216" y="203" font-weight="900">Test tezgâhı</text><text x="216" y="217" font-size="8.5">dijital ikiz (3)</text>
+          <rect x="300" y="186" width="132" height="42" rx="7" fill="#eef2f5" stroke="#cbd5e1"/>
+          <text x="366" y="203" font-weight="900">Emniyet etki</text><text x="366" y="217" font-size="8.5">analizi (4)</text>
+          <rect x="450" y="186" width="132" height="42" rx="7" fill="#eef2f5" stroke="#cbd5e1"/>
+          <text x="516" y="203" font-weight="900">Planlı pencere</text><text x="516" y="217" font-size="8.5">+ geri dönüş planı</text>
+          <rect x="600" y="186" width="140" height="42" rx="7" fill="#1f2d4d"/>
+          <text x="670" y="203" font-weight="900" fill="#fff">SF testleri + CRC</text><text x="670" y="217" font-size="8.5" fill="#dbe4f0">kayıt → EP 09·10·11</text>
+        </g>
+        <g stroke="#475569" stroke-width="1.5" fill="none">
+          <line x1="105" y1="33" x2="124" y2="33" marker-end="url(#ak)"/>
+          <line x1="255" y1="33" x2="274" y2="33" marker-end="url(#ak)"/>
+          <line x1="405" y1="33" x2="424" y2="33" marker-end="url(#ak)"/>
+          <line x1="555" y1="33" x2="574" y2="33" marker-end="url(#ak)"/>
+          <line x1="190" y1="58" x2="190" y2="74" marker-end="url(#ak)"/>
+          <line x1="340" y1="58" x2="340" y2="74" marker-end="url(#ak)"/>
+          <line x1="490" y1="58" x2="490" y2="74" marker-end="url(#ak)"/>
+          <line x1="648" y1="58" x2="648" y2="74" marker-end="url(#ak)"/>
+          <path d="M720 33 H732 V138 H722" marker-end="url(#ak)"/>
+          <!-- outcomes to pipeline -->
+          <path d="M576 94 H571 V170 H66 V184" marker-end="url(#ak)"/>
+          <path d="M648 156 V170"/>
+          <line x1="133" y1="207" x2="148" y2="207" marker-end="url(#ak)"/>
+          <line x1="283" y1="207" x2="298" y2="207" marker-end="url(#ak)"/>
+          <line x1="433" y1="207" x2="448" y2="207" marker-end="url(#ak)"/>
+          <line x1="583" y1="207" x2="598" y2="207" marker-end="url(#ak)"/>
+        </g>
+        <path d="M125 170 V156" stroke="#e5a00d" stroke-width="1.5" stroke-dasharray="4 3" fill="none" marker-end="url(#ak)"/>
+        <g font-size="7.8" fill="#475569" font-weight="700" text-anchor="middle">
+          <text x="265" y="27">evet</text><text x="415" y="27">evet</text><text x="565" y="27">evet</text>
+          <text x="736" y="90" transform="rotate(90 736 90)">hayır</text>
+          <text x="148" y="166" fill="#a16207">yama yoksa</text>
+        </g>
+      </svg>
+    </div>
+    <div class="legend">Parantezdeki numaralar föyün sorularıdır. Akış bu CVE için iki kez yürütüldü: bugünkü mimaride ④ "evet" çıkıyor (SF-1 uzaktan ulaşılabilen kartta), hedef mimaride "hayır".</div>
+
+    <div class="q" style="margin-top:3.5mm;">
+      <div class="num">2</div>
+      <div>
+        <div class="qt">Üretimi hemen durdurur musunuz? Neden / neden değil?</div>
+        <div class="ans">
+          <p>Bu makinede "üretimi durdurmak", kapıyı ve dolayısıyla tanker akışını durdurmak demek. Tam durdurmanın da iki yüzü var: bariyerler aşağıda kalırsa kapı korumasız kalır; yukarıda kalırsa tanker kuyruğu kamu yoluna taşar ve tesisin hammaddesi kesilir.</p>
+          <div class="duo">
+            <div class="now"><div class="h">Bugün<span class="v">V</span> <span class="verdict bad">EVET — otomatik modu durdururuz</span></div>4G fiziksel olarak sökülür, Arma Mobil kapatılır. Bariyerler yukarıda sabitlenir; her araç görevli tarafından yerel butonla ve gözle kontrol edilerek alınır. Neden: internetten ulaşılabilen 9.8'lik bir açık ile aynı karttaki SF-1, hem kapıyı açtırabilir hem insana zarar verebilir.</div>
+            <div class="goal"><div class="h">Hedef mimaride <span class="verdict ok">HAYIR</span></div>SF-1 bağımsız, insan korunur. Açığa yalnız kulübe PC'sinden C3 üzerinden ulaşılır; zafiyetli servis C3'te hemen engellenir. Yama 7 gün içinde, test edilerek uygulanır. Aktif istismar kanıtı (KEV, üretici uyarısı, anormal komut kaydı) gelirse bugünkü moda geçilir.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="q">
+      <div class="num">3</div>
+      <div>
+        <div class="qt">Yamayı doğrudan mı uygularsınız, önce test mi? Nerede test?</div>
+        <div class="ans">
+          <p><b>Önce test.</b> Bu kart bariyeri hareket ettiriyor; test edilmemiş bir yama, açığın kendisinden daha büyük bir risk olabilir.</p>
+          <ol>
+            <li><b>Doğrula:</b> yama yalnız üretici portalından alınır; imzası ve hash'i üreticinin yayımladığıyla karşılaştırılır (sahte yamaya karşı).</li>
+            <li><b>Test tezgâhı:</b> entegratörde aynı Arma Kart ve firmware'le kurulu bir "dijital ikiz"; loop, fotosel ve hidrolik valfler simüle edilir. Aç/kapat/durum komutları, WOC haberleşmesi, plaka/kart entegrasyonu ve enerji kes-ver davranışı (GR-5) denenir.</li>
+            <li><b>Sahada:</b> en düşük trafikli pencerede (ör. Pazar 02:00–04:00). Görevli prosedürü ve iç bariyer hattı yedekte bekler; önceki imzalı firmware geri dönüş için hazırdır. LAB 2'deki C8 kuralı geçerli: taramadan geçmiş servis dizüstü, iki kişi.</li>
+            <li><b>Sonra:</b> LAB 1 haritasındaki SF testleri, parametre CRC karşılaştırması ve 24 saat yoğun izleme.</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer"><span>SAFETY 4.0 BOOTCAMP · Arma Mantar Bariyer Sürümü · Bu bir eğitim çıktısıdır, resmî denetim değildir.</span><span>2 / 3</span></div>
+</section>
+
+<!-- ============================ PAGE 3 ============================ -->
+<section class="page">
+  <div class="content" style="padding-top: 11mm;">
+    <div class="q">
+      <div class="num">4</div>
+      <div>
+        <div class="qt">Bu yama bir safety validation etkiliyor mu? Nasıl anlarsınız?</div>
+        <div class="ans">
+          <div class="duo">
+            <div class="now"><div class="h">Bugün<span class="v">V</span> <span class="verdict bad">EVET</span></div>SF-1'in mantığı yamalanan firmware'in içinde. Kartın firmware'i değişince emniyet fonksiyonunun doğrulaması geçersiz olur: yazılım değişikliği etki analizi + SF-1/2/3 testlerinin tamamı yeniden yapılır.</div>
+            <div class="goal"><div class="h">Hedef mimaride <span class="verdict ok">BÜYÜK OLASILIKLA HAYIR</span></div>Yama Z1'deki Arma Kart'a; SF-1 Z0'daki Safety PLC'de. Yine de "büyük olasılıkla" kanıtlanmadan kabul edilmez.</div>
+          </div>
+          <p><b>Nasıl anlarız?</b> (1) <b>Etki analizi:</b> yama notlarındaki değişen modüller, LAB 1 Safety Function Map'teki SF giriş/çıkış ve zamanlamalarıyla eşleştirilir. (2) <b>İmza:</b> Safety PLC programının imzası/CRC'si yama öncesi ve sonrası aynı olmalı. (3) <b>Arayüz:</b> C1 üzerinden giden "yükseltme talebi" sinyalinin davranışı değişmemeli. (4) <b>Kısaltılmış doğrulama:</b> yine de GR-2 (alan doluyken komut → hareket yok) ve GR-5 testleri yapılır. <b>Kural:</b> şüphede tam doğrulama.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="q">
+      <div class="num">5</div>
+      <div>
+        <div class="qt">Yama mümkün değilse compensating control (telafi edici önlem) ne olur?</div>
+        <div class="ans"><p>Amaç, üç şarttan birini, en kolayı "ulaşılabilirlik"i ortadan kaldırmak ve kalan riski süreli olarak kayda almak.</p></div>
+      </div>
+    </div>
+    <table>
+      <thead><tr><th style="width:4%">#</th><th style="width:25%">Önlem</th><th>Ne yapar?</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td><b>Ulaşılabilirliği kes</b></td><td>Zafiyetli servis (HTTP/80) C3'te engellenir; 4G sökülür; Arma Mobil'in uzaktan komutu kapatılır → 3. şart ortadan kalkar</td></tr>
+        <tr><td>2</td><td><b>Sanal yama</b></td><td>C3'teki endüstriyel güvenlik duvarında / IPS'te bu CVE'ye özel imza; istismar trafiği karta ulaşmadan düşer</td></tr>
+        <tr><td>3</td><td><b>İzleme</b></td><td>Z1 segmentinde OT saldırı tespit sistemi (IDS); yeni bir bağlantı ya da beklenmeyen komut güvenlik merkezine alarm üretir</td></tr>
+        <tr><td>4</td><td><b>Fiziksel</b></td><td>Pano kilitli, servis portu mühürlü; mühür her vardiyada kontrol edilir</td></tr>
+        <tr><td>5</td><td><b>Emniyet</b> (bugünkü mimaride kritik)</td><td>Geçici, bağımsız bir emniyet rölesi: loop + fotosel doğrudan pompa kontaktörünü keser. SF-1 karttan bağımsızlaşır; kart ele geçirilse bile insan korunur</td></tr>
+        <tr><td>6</td><td><b>Süreli risk kabulü</b></td><td>Sorumlu + bitiş tarihi (en çok 30 gün) + üreticiden yama takvimi talebi. Aktif istismar varsa üretici bunu CRA gereği 24 saat içinde bildirmekle yükümlü (11.09.2026'dan beri)</td></tr>
+      </tbody>
+    </table>
+
+    <h2 class="task">Çıktı — Vulnerability Decision</h2>
+    <table class="rec">
+      <tbody>
+        <tr><td>CVE / bileşen</td><td>CVE-XXXX-XXXX · Component X 2.4 · CVSS 9.8 (AV:N/AC:L/PR:N/UI:N)</td></tr>
+        <tr><td>Etkilenen varlık</td><td>3 · Arma Kart [EE51KAR], Z1. Safety PLC'de ve diğer varlıklarda yok</td></tr>
+        <tr><td>Etkiliyor mu?</td><td>Bugün 3/3 → <b>evet, acil</b> · Hedef mimaride 2/3 + dar yol → <b>evet, planlı</b></td></tr>
+        <tr><td>İlk 24 saat</td><td>Bugün: 4G sökülür, Mobil kapatılır, manuel mod. Hedef: C3'te HTTP/80 engeli + IDS kuralı</td></tr>
+        <tr><td>Yama</td><td>İmza doğrulama → test tezgâhı → planlı pencere. Süre: bugün ≤ 72 saat, hedef ≤ 7 gün</td></tr>
+        <tr><td>Emniyet doğrulaması</td><td>Bugün: tam yeniden doğrulama · Hedef: etki analizi + imza karşılaştırması + GR-2/GR-5 testleri</td></tr>
+        <tr><td>Yama yoksa</td><td>Telafi edici önlemler 1–6 + en çok 30 günlük süreli risk kabulü</td></tr>
+        <tr><td>Sorumlular</td><td>OT güvenlik sorumlusu (karar) · entegratör (test ve uygulama) · İSG uzmanı (emniyet doğrulaması) · güvenlik müdürü (manuel mod)</td></tr>
+        <tr><td>Kanıt</td><td>SBOM sürümü, bu karar kaydı, test raporu, imza/CRC karşılaştırması, değişiklik kaydı</td></tr>
+      </tbody>
+    </table>
+
+    <div class="box"><span class="g">G</span> üreticinin sitesinde yazan bilgi · <span class="v">V</span> eğitim senaryosu varsayımı, <b>Arma ürünü hakkında iddia değildir</b>; CVE, bileşen ve SBOM içeriği föyün verdiği örnek kayda göre kurgulanmıştır. Dayanaklar: CVSS v3.1 · CISA KEV (bilinen istismar edilen açıklar) · ISO 13849-1:2023 (yazılım değişikliğinde doğrulama) · CRA (AB 2024/2847) Madde 14 ve Ek I Bölüm II.</div>
+
+    <div class="evidence">
+      <svg width="16" height="18" viewBox="0 0 16 18" fill="none" stroke="#14706a" stroke-width="1.6"><path d="M2 1.5h7.5L14 6v10.5H2z"/><path d="M9.5 1.5V6H14"/></svg>
+      <span>Bu föyün çıktısı <span class="hl">Vulnerability Decision</span> → Evidence Pack <span class="hl">EP 09 · 10 · 11</span> başlığına oturur.</span>
+    </div>
+  </div>
+
+  <div class="footer"><span>SAFETY 4.0 BOOTCAMP · Arma Mantar Bariyer Sürümü · Bu bir eğitim çıktısıdır, resmî denetim değildir.</span><span>3 / 3</span></div>
+</section>
+
+</body>
+</html>
